@@ -83,7 +83,7 @@ export default {
         }).then(response =>{
           console.log(response.data)
         }).catch(error=>{
-        console.log(error.message)
+        console.log(error.message )
         })
         console.log("login function");
       }
