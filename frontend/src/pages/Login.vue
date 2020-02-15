@@ -7,19 +7,21 @@
     <div class="content">
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
-          <card v-if="login" type="login" plain>
+          <card type="login" plain>
             <div slot="header" class="logo-container">
               <img v-lazy="'img/Logo.png'" alt="" />
             </div>
 
             <fg-input
+              v-model="user.email"
               class="no-border input-lg"
               addon-left-icon="now-ui-icons users_circle-08"
-              placeholder=" Numéro ID..."
+              placeholder=" E-mail..."
             >
             </fg-input>
 
             <fg-input
+              v-model="user.password"
               class="no-border input-lg"
               addon-left-icon="now-ui-icons text_caps-small"
               placeholder="Mot de passe ..."
@@ -29,65 +31,21 @@
             <template slot="raw-content">
               <div class="card-footer text-center">
                 <a
-                  href="#pablo"
+                 @click.prevent="login()"
                   class="btn btn-primary btn-round btn-lg btn-block"
                   >Se connecter</a
                 >
               </div>
               <div class="pull-left">
-                <h6 @click="toogle()">
-                  <a class="link footer-link">Cree un compte </a>
+                <h6 >
+                  <router-link :to="{ name: 'register'}">
+                    <a class="link footer-link">Cree un compte </a>
+                  </router-link>
                 </h6>
               </div>
             </template>
           </card>
 
-          <card v-else type="login" plain>
-            <div slot="header" class="logo-container">
-              <img v-lazy="'img/Logo.png'" alt="" />
-            </div>
-
-            <fg-input
-              class="no-border input-lg"
-              addon-left-icon="now-ui-icons users_circle-08"
-              placeholder=" Nom et prenom ..."
-            >
-            </fg-input>
-
-            <fg-input
-              class="no-border input-lg"
-              addon-left-icon="now-ui-icons users_circle-08"
-              placeholder=" Numéro ID ..."
-            >
-            </fg-input>
-
-            <fg-input
-              class="no-border input-lg"
-              addon-left-icon="now-ui-icons text_caps-small"
-              placeholder="Mot de passe ..."
-            >
-            </fg-input>
-            <fg-input
-              class="no-border input-lg"
-              addon-left-icon="now-ui-icons text_caps-small"
-              placeholder="Confirmation mot de passe ..."
-            >
-            </fg-input>
-
-            <template slot="raw-content">
-              <div class="card-footer text-center">
-                <a
-                  class="btn btn-primary btn-round btn-lg btn-block"
-                  >Enregistrer</a
-                >
-              </div>
-              <div class="pull-left">
-                <h6 @click="toogle()">
-                  <a class="link footer-link">Login</a>
-                </h6>
-              </div>
-            </template>
-          </card>
 
         </div>
       </div>
@@ -98,6 +56,7 @@
 <script>
 import { Card, Button, FormGroupInput } from '@/components';
 import MainFooter from '@/layout/MainFooter';
+import axios from 'axios';
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
@@ -109,15 +68,25 @@ export default {
   },
     data(){
       return {
-        login:true,
-        register:false,
+        user:{
+          email:"",
+          password:""
+        },
+        error:""
       }
     },
     methods:{
-      toogle(){
-          this.login= !this.login
-          this.resgister= !this.resgister
-      },
+      login(){
+       axios.post('http://localhost:8000/api/auth/login',{
+            email:this.user.email,
+            password:this.user.paswword
+        }).then(response =>{
+          console.log(response.data)
+        }).catch(error=>{
+        console.log(error.message)
+        })
+        console.log("login function");
+      }
     }
 
 };
