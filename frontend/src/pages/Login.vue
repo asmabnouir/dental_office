@@ -44,6 +44,15 @@
                 </h6>
               </div>
             </template>
+              <alert
+              v-if="error"
+              type="primary alert" dismissible>
+                <div class="alert-icon">
+                      <i class="now-ui-icons ui-2_like"></i>
+                    </div>
+                    <strong>Oups!</strong> Votre email ou mot de passe est incorrecte
+                    {{error}}
+              </alert>
           </card>
 
 
@@ -54,7 +63,7 @@
   </div>
 </template>
 <script>
-import { Card, Button, FormGroupInput } from '@/components';
+import { Card, Button, FormGroupInput, Alert} from '@/components';
 import MainFooter from '@/layout/MainFooter';
 import axios from 'axios';
 export default {
@@ -64,7 +73,8 @@ export default {
     Card,
     MainFooter,
     [Button.name]: Button,
-    [FormGroupInput.name]: FormGroupInput
+    [FormGroupInput.name]: FormGroupInput,
+    Alert,
   },
     data(){
       return {
@@ -77,10 +87,11 @@ export default {
     },
     methods:{
       login(){
+       //axios.defaults.headers.post['X-CSRF-Token'] = response.data._csrf;
        axios.post('http://localhost:8000/api/auth/login',{
             email:this.user.email,
             password:this.user.paswword
-        }).then(response =>{
+        }).then(response =>{ 
           console.log(response.data)
         }).catch(error=>{
         console.log(error.message )
