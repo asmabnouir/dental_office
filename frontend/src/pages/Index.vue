@@ -35,11 +35,9 @@ export default {
     TabsSection,
     Calendar,
     Contact
-  }
+  },
+  
 };
 </script>
 <style Scoped lang="scss">
-.page-header {
-
-}
 </style>

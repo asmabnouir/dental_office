@@ -48,6 +48,11 @@
           </a>
         </router-link>
         </li>
+        <li class="nav-item" @click.prevent="logout()">
+            <n-button type="primary" outline round>
+            <i class="fa fa-heart"></i> with icon
+            </n-button>
+        </li>
 
 
     </template>
@@ -57,6 +62,10 @@
 <script>
 import { DropDown, NavbarToggleButton, Navbar, NavLink } from '@/components';
 import { Popover } from 'element-ui';
+import {Button} from '../components';
+import axios from 'axios';
+import { Bus } from '../main';
+
 export default {
   name: 'main-navbar',
   props: {
@@ -68,8 +77,22 @@ export default {
     Navbar,
     NavbarToggleButton,
     NavLink,
-    [Popover.name]: Popover
-  }
+    [Popover.name]: Popover,
+     [Button.name]: Button
+  },
+  data(){
+    return{
+      }
+    },
+  methods:{
+    logout(){
+        Bus.$on(token,
+        document.cookie = token +'=; Max-Age=-99999999;'
+        );
+       //this.$router.push("/login");
+        console.log("logout function");
+      }
+    }
 };
 </script>
 

@@ -17,7 +17,12 @@
               </fg-input>
             </div>
             ----->
-            <vue-scheduler/>
+            <vue-scheduler
+            :time-range="[8,16]"
+            locale="fr"
+            initial-view="week"
+             @event-clicked="eventClicked"
+             />
           </div>
         </div>
     </div>
@@ -38,19 +43,40 @@
       },
       data() {
         return {
+          events:[{
+            name:"",
+            date:new Date(),
+            startTime: "",
+            endTime: "",
+            }]
         };
+      },
+      methods: {
+
+      timeClicked(dateWithTime) {
+            console.log('Time clicked');
+            console.log('Date: ' + dateWithTime.date );
+            console.log('Time: ' + dateWithTime.time );
+          },
+        eventClicked(event){
+          console.log(event.name)
+        }
       }
     };
     </script>
     <style scoped media="scss" lang="scss">
       .navigation-example{
           min-height: 500px !important;
-      };
+      }
       .calendar-container{
         h4{text-align: center};
-        margin:70px auto;
+        margin:80px auto;
+        padding: 40px ;
         text-align: center
       };
+      .v-cal-header{
+        padding: 0 !important;
+      }
      .test{
        margin:auto;
      }

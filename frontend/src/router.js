@@ -10,7 +10,7 @@ import MainFooter from './layout/MainFooter.vue';
 
 Vue.use(Router);
 
-export default new Router({
+ const router = new Router({
   linkExactActiveClass: 'active',
   mode: 'history',
   routes: [
@@ -48,11 +48,14 @@ export default new Router({
         header: { colorOnScroll: 400 }
       }
     },
-    
     {
       path: '/profile',
       name: 'profile',
       components: { default: Profile, header: MainNavbar, footer: MainFooter },
+      beforeEach:(to, from, next) => {
+        if (!isAuthenticated) next('/login')
+        else next()
+      },
       props: {
         header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }
@@ -67,3 +70,21 @@ export default new Router({
     }
   }
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!auth.loggedIn()) {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      neext()
+    }
+  } else {
+    next() // make sure to always call next()!
+  }
+});
+export default router;

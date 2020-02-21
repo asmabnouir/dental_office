@@ -66,6 +66,7 @@
 import { Card, Button, FormGroupInput, Alert} from '@/components';
 import MainFooter from '@/layout/MainFooter';
 import axios from 'axios';
+import { Bus } from '../main';
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
@@ -87,14 +88,17 @@ export default {
     },
     methods:{
       login(){
-       //axios.defaults.headers.post['X-CSRF-Token'] = response.data._csrf;
        axios.post('http://localhost:8000/api/auth/login',{
             email:this.user.email,
             password:this.user.paswword
-        }).then(response =>{ 
-          console.log(response.data)
+        }).then(response =>{
+             console.log(response.data);
+            var token = response.data.access_token;
+            console.log(Bus.$emit(token));
+            document.cookie = token;
+         /// this.$router.push("/profile");
         }).catch(error=>{
-        console.log(error.message )
+        console.log(error.message)
         })
         console.log("login function");
       }

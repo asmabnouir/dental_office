@@ -26,10 +26,11 @@ import VueScheduler from 'v-calendar-scheduler';
 import 'v-calendar-scheduler/lib/main.css';
 
 
+
 Vue.config.productionTip = false;
-export const bus = new Vue();
+export const Bus = new Vue();
 Vue.use(NowUiKit);
-Vue.use(VueScheduler);
+Vue.use(VueScheduler,{ locale: 'fr'});
 
 new Vue({
   router,

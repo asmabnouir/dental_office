@@ -8,14 +8,10 @@
   </div>
 </template>
 <script>
+
 export default {
    data() {
     return {
-      authenticated: false,
-      mockAccount: {
-          email: "testMail",
-          password: "password"
-      }
     }
   },
   mounted() {

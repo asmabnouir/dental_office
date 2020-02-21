@@ -69,6 +69,7 @@
 <script>
 import { Card, Button, FormGroupInput } from '@/components';
 import MainFooter from '@/layout/MainFooter';
+import axios from 'axios';
 export default {
   name: 'Register-page',
   bodyClass: 'login-page',
@@ -88,9 +89,18 @@ export default {
       }
     },
     methods:{
-        register:()=>{
-             console.log("register function");
-        }
+        register(){
+           axios.post('http://localhost:8000/api/auth/register',{
+             name:this.user.name,
+            email:this.user.email,
+            password:this.user.paswword
+        }).then(response =>{
+          console.log(response.data)
+        }).catch(error=>{
+        console.log(error.message )
+        })
+        console.log("register function");
+      }
     }
 
 };
