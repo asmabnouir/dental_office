@@ -14,6 +14,7 @@
 
             <fg-input
               v-model="user.email"
+              name="email"
               class="no-border input-lg"
               addon-left-icon="now-ui-icons users_circle-08"
               placeholder=" E-mail..."
@@ -22,6 +23,7 @@
 
             <fg-input
               v-model="user.password"
+              name="password"
               class="no-border input-lg"
               addon-left-icon="now-ui-icons text_caps-small"
               placeholder="Mot de passe ..."
@@ -83,7 +85,8 @@ export default {
           email:"",
           password:""
         },
-        error:""
+        error:"",
+        token:""
       }
     },
     methods:{
@@ -93,10 +96,10 @@ export default {
             password:this.user.paswword
         }).then(response =>{
              console.log(response.data);
-            var token = response.data.access_token;
-            console.log(Bus.$emit(token));
-            document.cookie = token;
-         /// this.$router.push("/profile");
+            this.token = response.data.access_token;
+            console.log(Bus.$emit("clicked", this.token));
+          document.cookie = this.token;
+         //this.$router.push("/profile");
         }).catch(error=>{
         console.log(error.message)
         })

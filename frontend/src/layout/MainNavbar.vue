@@ -85,10 +85,13 @@ export default {
       }
     },
   methods:{
+    eraseCookie(name) {
+        document.cookie = name + '=; Max-Age=0'
+          },
     logout(){
-        Bus.$on(token,
-        document.cookie = token +'=; Max-Age=-99999999;'
-        );
+        Bus.$on("clicked",token =>{
+          document.cookie = token + '=; Max-Age=0'
+        });
        //this.$router.push("/login");
         console.log("logout function");
       }

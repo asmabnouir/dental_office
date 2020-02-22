@@ -51,15 +51,23 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);*/
-        $email = request('email');
-        $password = request('password');
 
-        $token = auth()->attempt(['email' => $email, 'password' => $password]);
+        $credentials = [
+            'email' => request('email'),
+            'password' => request('password'),
+        ];
+        //$email = request('email');
+        //$password = request('password');
+
+        $token = auth()->attempt($credentials);
         //$remember = \request()->has('remember');
         if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return $this->respondWithToken($token);
+        echo('Welcome! Your account has been successfully logged in ');
+
+        //$request->session()->forget(['email','password']);
     }
 
     /**
