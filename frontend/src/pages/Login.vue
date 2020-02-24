@@ -55,6 +55,15 @@
                     <strong>Oups!</strong> Votre email ou mot de passe est incorrecte
                     {{error}}
               </alert>
+              <template>
+                <div>
+                  {{isLogged}}
+                  <div class=" col-md-5 ml-auto mr-auto ">
+                      <a  v-if="isLogged"> login</a>
+                      <a v-else  @click.prevent="logout()" > logout </a>
+                    </div>
+                </div>
+              </template>
           </card>
 
 
@@ -85,6 +94,7 @@ export default {
           email:"",
           password:""
         },
+        isLogged:false,
         error:"",
         token:""
       }
@@ -95,15 +105,28 @@ export default {
             email:this.user.email,
             password:this.user.paswword
         }).then(response =>{
-             console.log(response.data);
-            this.token = response.data.access_token;
-            console.log(Bus.$emit("clicked", this.token));
-          document.cookie = this.token;
-         //this.$router.push("/profile");
+          console.log(response.data);
+          //this.token = response.data.access_token;
+         // document.cookie = this.token;
+         //this.$router.push({ name: 'profile'});
         }).catch(error=>{
         console.log(error.message)
         })
         console.log("login function");
+      },
+      /*eraseCookie(name) {
+        document.cookie = name + '=; Max-Age=0'
+          },*/
+      logout(){
+        /*Bus.$on("clicked",token =>{
+          document.cookie = token + '=; Max-Age=0'
+        });*/
+        this.isLogged = false;
+        //axios.post('http://localhost:8000/api/auth/logout').then(response =>{
+       //  console.log(response)});
+       //this.$router.push({name: 'login'});
+
+        console.log( this.isLogged +"  // logout function");
       }
     }
 

@@ -36,10 +36,8 @@
           <p>Contact</p>
         </a>
       </li>
-
-
         <li class="nav-item">
-          <router-link :to="{ name: 'login', params: {} }">
+          <router-link :to="{ name: 'login' }">
             <a
             class="nav-link"
             target="_blank"
@@ -48,11 +46,7 @@
           </a>
         </router-link>
         </li>
-        <li class="nav-item" @click.prevent="logout()">
-            <n-button type="primary" outline round>
-            <i class="fa fa-heart"></i> with icon
-            </n-button>
-        </li>
+        
 
 
     </template>
@@ -84,18 +78,6 @@ export default {
     return{
       }
     },
-  methods:{
-    eraseCookie(name) {
-        document.cookie = name + '=; Max-Age=0'
-          },
-    logout(){
-        Bus.$on("clicked",token =>{
-          document.cookie = token + '=; Max-Age=0'
-        });
-       //this.$router.push("/login");
-        console.log("logout function");
-      }
-    }
 };
 </script>
 

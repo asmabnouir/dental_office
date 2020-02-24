@@ -52,14 +52,12 @@ Vue.use(Router);
       path: '/profile',
       name: 'profile',
       components: { default: Profile, header: MainNavbar, footer: MainFooter },
-      beforeEach:(to, from, next) => {
-        if (!isAuthenticated) next('/login')
-        else next()
-      },
-      props: {
-        header: { colorOnScroll: 400 },
-        footer: { backgroundColor: 'black' }
-      }
+      //meta: { requiresAuth: true },
+        props: {
+          header: { colorOnScroll: 400 },
+          footer: { backgroundColor: 'black' }
+        }
+
     }
   ],
   scrollBehavior: to => {
@@ -70,21 +68,13 @@ Vue.use(Router);
     }
   }
 });
-
-router.beforeEach((to, from, next) => {
+/*router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
-    if (!auth.loggedIn()) {
-      next({
-        path: '/login',
-        query: { redirect: to.fullPath }
-      })
-    } else {
-      neext()
-    }
+    (isLogged && isLogged !== "false") ? next() : next({name:"login"})
   } else {
     next() // make sure to always call next()!
   }
-});
+})*/
 export default router;

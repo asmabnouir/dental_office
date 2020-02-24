@@ -65,9 +65,6 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return $this->respondWithToken($token);
-        echo('Welcome! Your account has been successfully logged in ');
-
-        //$request->session()->forget(['email','password']);
     }
 
     /**
@@ -88,7 +85,10 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-
+        $request->session()->forget( [
+            'email' => request('email'),
+            'password' => request('password'),
+        ]);
         return response()->json(['message' => 'Successfully logged out']);
     }
 
