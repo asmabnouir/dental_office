@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router'
 import Router from 'vue-router';
 import Index from './pages/Index.vue';
 import Landing from './pages/Landing.vue';
@@ -8,10 +7,10 @@ import Register from './pages/Register.vue';
 import Profile from './pages/Profile.vue';
 import MainNavbar from './layout/MainNavbar.vue';
 import MainFooter from './layout/MainFooter.vue';
+import Store from './store';
+Vue.use(Router);
 
-Vue.use(VueRouter);
-
- const router = new VueRouter({
+ const router = new Router({
   linkExactActiveClass: 'active',
   mode: 'history',
   routes: [
@@ -38,7 +37,7 @@ Vue.use(VueRouter);
       name: 'login',
       components: { default: Login, header: MainNavbar },
       meta: {
-        auth: false
+        requiresAuth: false
     },
       props: {
         header: { colorOnScroll: 400 }
@@ -48,7 +47,7 @@ Vue.use(VueRouter);
       path: '/register',
       name: 'register',
       meta: {
-        auth: false
+        requiresAuth: false
     },
       components: { default: Register, header: MainNavbar },
       props: {
@@ -60,7 +59,7 @@ Vue.use(VueRouter);
       name: 'profile',
       components: { default: Profile, header: MainNavbar, footer: MainFooter },
       meta: {
-        auth: true
+        requiresAuth: true
     },
         props: {
           header: { colorOnScroll: 400 },
@@ -86,4 +85,17 @@ Vue.use(VueRouter);
     next() // make sure to always call next()!
   }
 })*/
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const isLoggedIn = Store.state.isLoggedIn;
+
+  if(requiresAuth && !isLoggedIn) {
+      next('/login');
+  } else if(to.path == '/login' && isLoggedIn) {
+      next('/');
+  } else {
+      next();
+  }
+});
 export default router;

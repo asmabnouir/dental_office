@@ -57,9 +57,9 @@
               </alert>
               <template>
                 <div>
-                  {{isLogged}}
+                  {{this.$store.state.isLoggedIn}}
                   <div class=" col-md-5 ml-auto mr-auto ">
-                      <a  v-if="isLogged"> login</a>
+                      <a  v-if="!this.$store.state.isLoggedIn"> login</a>
                       <a v-else  @click.prevent="logout()" > logout </a>
                     </div>
                 </div>
@@ -78,6 +78,7 @@ import { Card, Button, FormGroupInput, Alert} from '@/components';
 import MainFooter from '@/layout/MainFooter';
 import axios from 'axios';
 import { Bus } from '../main';
+
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
@@ -94,9 +95,7 @@ export default {
           email:"",
           password:""
         },
-        isLogged:false,
         error:"",
-        token:""
       }
     },
     methods:{
@@ -106,27 +105,19 @@ export default {
             password:this.user.paswword
         }).then(response =>{
           console.log(response.data);
-          //this.token = response.data.access_token;
-         // document.cookie = this.token;
+          this.$store.state.token = response.data.access_token;
+          this.$store.commit("loginSuccess", response);
          //this.$router.push({ name: 'profile'});
         }).catch(error=>{
         console.log(error.message)
         })
         console.log("login function");
       },
-      /*eraseCookie(name) {
-        document.cookie = name + '=; Max-Age=0'
-          },*/
       logout(){
-        /*Bus.$on("clicked",token =>{
-          document.cookie = token + '=; Max-Age=0'
-        });*/
-        this.isLogged = false;
-        //axios.post('http://localhost:8000/api/auth/logout').then(response =>{
-       //  console.log(response)});
+       this.$store.commit('logout');
        //this.$router.push({name: 'login'});
+        console.log( this.$store.state.isLoggedIn +"  // logout function");
 
-        console.log( this.isLogged +"  // logout function");
       }
     }
 

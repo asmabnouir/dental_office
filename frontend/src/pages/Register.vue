@@ -85,7 +85,10 @@ export default {
             name:"",
             email:"",
             password:"",
-        }
+        },
+          error: false,
+          errors: {},
+          success: false
       }
     },
     methods:{

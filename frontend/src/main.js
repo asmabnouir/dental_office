@@ -17,8 +17,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 
-// import router and vue-router 
-import VueRouter from 'vue-router'
+// import router
 import router from './router';
 
 //import the template plugin
@@ -31,28 +30,28 @@ import 'v-calendar-scheduler/lib/main.css';
 // Import axios
 import axios from 'axios';
 import VueAxios from 'vue-axios';
-// Import Auth
-import VueAuth from '@websanova/vue-auth'
+
+
+//import store
+import Store from './store';
+
+//import Vuex
+import Vuex from 'vuex'
 
 Vue.config.productionTip = false;
 
 export const Bus = new Vue();
 Vue.use(NowUiKit);
 Vue.use(VueScheduler,{ locale: 'fr'});
-Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
+Vue.use(Vuex)
 
-//vue router must be called before the auth to be setted
-Vue.router = router
-//confg the  Auth 
-Vue.use(VueAuth, {
-    auth: require('@websanova/vue-auth/drivers/auth/bearer.js'),
-    http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
-    router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js')
-});
+const store = new Vuex.Store(Store);
+
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app');
 
