@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import VueRouter from 'vue-router'
 import Router from 'vue-router';
 import Index from './pages/Index.vue';
 import Landing from './pages/Landing.vue';
@@ -8,9 +9,9 @@ import Profile from './pages/Profile.vue';
 import MainNavbar from './layout/MainNavbar.vue';
 import MainFooter from './layout/MainFooter.vue';
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
- const router = new Router({
+ const router = new VueRouter({
   linkExactActiveClass: 'active',
   mode: 'history',
   routes: [
@@ -36,6 +37,9 @@ Vue.use(Router);
       path: '/login',
       name: 'login',
       components: { default: Login, header: MainNavbar },
+      meta: {
+        auth: false
+    },
       props: {
         header: { colorOnScroll: 400 }
       }
@@ -43,6 +47,9 @@ Vue.use(Router);
     {
       path: '/register',
       name: 'register',
+      meta: {
+        auth: false
+    },
       components: { default: Register, header: MainNavbar },
       props: {
         header: { colorOnScroll: 400 }
@@ -52,7 +59,9 @@ Vue.use(Router);
       path: '/profile',
       name: 'profile',
       components: { default: Profile, header: MainNavbar, footer: MainFooter },
-      //meta: { requiresAuth: true },
+      meta: {
+        auth: true
+    },
         props: {
           header: { colorOnScroll: 400 },
           footer: { backgroundColor: 'black' }
