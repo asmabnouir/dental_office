@@ -88,12 +88,12 @@ Vue.use(Router);
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isLoggedIn = Store.state.isLoggedIn;
+  const token = Store.state.token;
 
-  if(requiresAuth && !isLoggedIn) {
+  if(requiresAuth && !token) {
       next('/login');
-  } else if(to.path == '/login' && isLoggedIn) {
-      next('/');
+ // } else if(to.path == '/login' && token) {
+     // next('/');
   } else {
       next();
   }

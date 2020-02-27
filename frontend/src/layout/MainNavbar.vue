@@ -37,21 +37,24 @@
         </a>
       </li>
         <li class="nav-item">
-          <router-link :to="{ name: 'login' }">
             <a
-            class="nav-link"
+            class="nav-link "
             target="_blank"
           >
+            <router-link :to="{ name: 'login' }"  v-if="!this.$store.state.isLoggedIn" >
             <i class="now-ui-icons users_circle-08"></i>
+            <a> login</a>
+           </router-link>
+            <div v-else >
+              <i class="now-ui-icons users_circle-08"></i>
+            <a @click.prevent="logout()" > logout </a>
+            </div>
           </a>
-        </router-link>
         </li>
-        
-
-
     </template>
   </navbar>
 </template>
+
 
 <script>
 import { DropDown, NavbarToggleButton, Navbar, NavLink } from '@/components';
@@ -76,9 +79,26 @@ export default {
   },
   data(){
     return{
+      logoutMsg:"",
       }
     },
+    methods:{
+            logout(){
+          axios.post('http://localhost:8000/api/auth/logout',{token:this.$store.state.token}).then(response =>{
+            console.log(response.data.message);
+            this.logoutMsg = response.data.message;
+           this.$store.commit('logout');
+           this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
+          }),
+          console.log( this.$store.state.isLoggedIn +"  // logout function");
+        }
+    }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.profile{
+  display:flex;
+  
+}
+</style>

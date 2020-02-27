@@ -99,6 +99,7 @@ export default {
             password:this.user.paswword
         }).then(response =>{
           console.log(response.data)
+          this.$router.push({ name: 'login'});
         }).catch(error=>{
         console.log(error.message )
         })

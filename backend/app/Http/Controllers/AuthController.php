@@ -16,7 +16,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['login','register']);
+        $this->middleware('auth:api')->except(['login','register','logout']);
     }
 
     /**
@@ -85,10 +85,6 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-        $request->session()->forget( [
-            'email' => request('email'),
-            'password' => request('password'),
-        ]);
         return response()->json(['message' => 'Successfully logged out']);
     }
 
@@ -114,8 +110,18 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
+            'expires_in' => $this->guard()->factory()->getTTL() * 60,
             'user' => auth()->user()
         ]);
+    }
+
+    /**
+     * Get the guard to be used during authentication.
+     *
+     * @return \Illuminate\Contracts\Auth\Guard
+     */
+    public function guard()
+    {
+        return Auth::guard();
     }
 }

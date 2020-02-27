@@ -6,6 +6,14 @@
     ></div>
     <div class="content">
       <div class="container">
+        <div v-show="this.$route.params.logoutState">
+        <alert type="success" dismissible>
+          <div class="alert-icon">
+              <i class="now-ui-icons ui-2_like"></i>
+           </div>
+            <strong>{{this.$route.params.message}}</strong>
+      </alert>
+        </div>
         <div class="col-md-5 ml-auto mr-auto">
           <card type="login" plain>
             <div slot="header" class="logo-container">
@@ -55,18 +63,7 @@
                     <strong>Oups!</strong> Votre email ou mot de passe est incorrecte
                     {{error}}
               </alert>
-              <template>
-                <div>
-                  {{this.$store.state.isLoggedIn}}
-                  <div class=" col-md-5 ml-auto mr-auto ">
-                      <a  v-if="!this.$store.state.isLoggedIn"> login</a>
-                      <a v-else  @click.prevent="logout()" > logout </a>
-                    </div>
-                </div>
-              </template>
           </card>
-
-
         </div>
       </div>
     </div>
@@ -78,6 +75,7 @@ import { Card, Button, FormGroupInput, Alert} from '@/components';
 import MainFooter from '@/layout/MainFooter';
 import axios from 'axios';
 import { Bus } from '../main';
+
 
 export default {
   name: 'login-page',
@@ -100,25 +98,24 @@ export default {
     },
     methods:{
       login(){
-       axios.post('http://localhost:8000/api/auth/login',{
+        if (!this.user.email && !this.user.password ) {
+           this.errors.push('email or Password required.');
+        } else {
+          axios.post('http://localhost:8000/api/auth/login',{
             email:this.user.email,
             password:this.user.paswword
         }).then(response =>{
           console.log(response.data);
-          this.$store.state.token = response.data.access_token;
+          this.$store.state.token =response.data.access_token
           this.$store.commit("loginSuccess", response);
-         //this.$router.push({ name: 'profile'});
+         this.$router.push({ name: 'profile'});
         }).catch(error=>{
         console.log(error.message)
         })
         console.log("login function");
+        }
       },
-      logout(){
-       this.$store.commit('logout');
-       //this.$router.push({name: 'login'});
-        console.log( this.$store.state.isLoggedIn +"  // logout function");
 
-      }
     }
 
 };
