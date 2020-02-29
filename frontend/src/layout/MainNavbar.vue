@@ -83,14 +83,14 @@ export default {
       }
     },
     methods:{
-            logout(){
+         logout(){
           axios.post('http://localhost:8000/api/auth/logout',{token:this.$store.state.token}).then(response =>{
             console.log(response.data.message);
             this.logoutMsg = response.data.message;
-           this.$store.commit('logout');
-           this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
+            this.$store.commit('logout');
+            this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
           }),
-          console.log( this.$store.state.isLoggedIn +"  // logout function");
+          console.log( this.$store.state.isLoggedIn + "  // logout function");
         }
     }
 };
@@ -99,6 +99,5 @@ export default {
 <style scoped>
 .profile{
   display:flex;
-  
 }
 </style>

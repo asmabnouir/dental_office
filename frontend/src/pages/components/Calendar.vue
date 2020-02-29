@@ -21,10 +21,12 @@
             :time-range="[8,16]"
             locale="fr"
             initial-view="week"
-             @event-clicked="eventClicked"
+             @time-clicked="timeClicked"
+             @event-created="eventCreated"
              />
           </div>
         </div>
+        <div><button @click.prevent="getIndex()">mon test get </button></div>
     </div>
   <div
     class="navigation-example"
@@ -36,6 +38,7 @@
 </template>
 
 <script>
+import axios from 'axios';
     export default {
 
       name: 'calendar',
@@ -43,26 +46,38 @@
       },
       data() {
         return {
-          events:[{
-            name:"",
-            date:new Date(),
+          events:[],
+             date:'',
             startTime: "",
             endTime: "",
-            }]
-        };
+        }
       },
       methods: {
-
       timeClicked(dateWithTime) {
             console.log('Time clicked');
             console.log('Date: ' + dateWithTime.date );
             console.log('Time: ' + dateWithTime.time );
-          },
-        eventClicked(event){
-          console.log(event.name)
-        }
-      }
-    };
+            console.dir(this.events);
+      },
+      eventCreated(){
+        axios.post('http:localhost:8000/event/create',  {
+            event_date:this.date,
+            start_time:this.startTime,
+        }).then(response=>{
+          console.dir(response);
+        })
+      },
+      getIndex(){
+        axios.get('http:localhost:8000/event/index',  {
+        }).then(response=>{
+          console.dir(response);
+        });
+        console.log("getfonction clicked")
+
+      },
+    }
+
+    }
     </script>
     <style scoped media="scss" lang="scss">
       .navigation-example{

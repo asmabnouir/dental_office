@@ -28,3 +28,15 @@ Route::group([
     Route::post('me', 'AuthController@me');
 
 });
+
+Route::group([
+    'prefix' => 'event'
+
+], function () {
+    Route::post('create', 'EventsController@create');
+    Route::get('index', 'EventsController@index');
+    Route::post('edit', 'EventsController@edit');
+    Route::post('delete', 'EventsController@delete');
+});
+
+
