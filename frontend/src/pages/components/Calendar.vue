@@ -23,6 +23,7 @@
             initial-view="week"
              @time-clicked="timeClicked"
              @event-created="eventCreated"
+             :events="events"
              />
           </div>
         </div>
@@ -47,33 +48,35 @@ import axios from 'axios';
       data() {
         return {
           events:[],
-             date:'',
-            startTime: "",
-            endTime: "",
+            error:"",
         }
+      },
+      computed:{
       },
       methods: {
       timeClicked(dateWithTime) {
             console.log('Time clicked');
             console.log('Date: ' + dateWithTime.date );
             console.log('Time: ' + dateWithTime.time );
-            console.dir(this.events);
+            //console.dir(this.events);
       },
-      eventCreated(){
-        axios.post('http:localhost:8000/event/create',  {
-            event_date:this.date,
-            start_time:this.startTime,
+      eventCreated(dateWithTime){
+        axios.post('http://localhost:8000/api/event/create',  {
+            event_date:dateWithTime.date,
+            start_time:dateWithTime.time,
         }).then(response=>{
           console.dir(response);
         })
       },
       getIndex(){
-        axios.get('http:localhost:8000/event/index',  {
+        axios.get('http://localhost:8000/api/event/index',  {
         }).then(response=>{
-          console.dir(response);
+          console.dir(response.data);
+          this.events=response.data;
+          console.dir(this.events);
+        }).catch(error=>{
+        console.log(error.message)
         });
-        console.log("getfonction clicked")
-
       },
     }
 

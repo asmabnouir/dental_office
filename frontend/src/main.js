@@ -27,6 +27,7 @@ import VueScheduler from 'v-calendar-scheduler';
 // Import VueScheduler styles
 import 'v-calendar-scheduler/lib/main.css';
 
+
 // Import axios
 import axios from 'axios';
 import VueAxios from 'vue-axios';
@@ -44,7 +45,7 @@ export const Bus = new Vue();
 Vue.use(NowUiKit);
 Vue.use(VueScheduler,{ locale: 'fr'});
 Vue.use(VueAxios, axios);
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const store = new Vuex.Store(Store);
 
