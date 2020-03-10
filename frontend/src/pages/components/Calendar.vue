@@ -28,6 +28,7 @@
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index"  @click="getInfo(dayDate, time)">
+          {{ displayEvent(dayDate, time) }}
       </td>
     </tr>
     </tbody>
@@ -59,11 +60,8 @@ import {DatePicker} from 'element-ui';
           weekDates:[]
         },
         startWeek:0,
-        event:{
-          time:'',
-          date:'',
-        },
-        };
+        events:[],
+      }
       },
       computed: {
       },
@@ -141,8 +139,8 @@ import {DatePicker} from 'element-ui';
         },
         //rebuild the calendar depending on the currentweek saved in data
         displayCalendar(){
-            this.getDateRangeOfWeek()
-            this.getWeekDates()
+            this.getDateRangeOfWeek();
+            this.getWeekDates();
         },
 
       //moving in calendar
@@ -160,7 +158,14 @@ import {DatePicker} from 'element-ui';
       this.CurrentWeek();
       this.displayCalendar();
       },
+      displayEvent(dayDate, time) {
+        return this.events.find(el => {
+          return (el.date === dayDate && el.time === time)
+        })
+      },
     },
+
+
 
     /////////////calendar build /////////
 
@@ -168,6 +173,13 @@ import {DatePicker} from 'element-ui';
     //build the times slots
     this.generateTimes(30,8,17);
     this.getToday();
+    this.axios.get('http://localhost:8000/api/event/index',  {
+        }).then(response=>{
+          console.dir(response.data);
+          //this.events= respone.data;
+        }).catch(error=>{
+        console.log(error.message)
+        });
     },
     };
     </script>

@@ -21,7 +21,6 @@ class EventsController extends Controller
         return $data->tojson(); //$data is an object converted to json
        // return  Event::all();
     }
-    
     //fonction admin 
     public function create(Request $request)
     {
