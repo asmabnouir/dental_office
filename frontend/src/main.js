@@ -22,10 +22,6 @@ import router from './router';
 
 //import the template plugin
 import NowUiKit from './plugins/now-ui-kit';
-// Import VueScheduler
-import VueScheduler from 'v-calendar-scheduler';
-// Import VueScheduler styles
-import 'v-calendar-scheduler/lib/main.css';
 
 
 // Import axios
@@ -43,7 +39,6 @@ Vue.config.productionTip = false;
 
 export const Bus = new Vue();
 Vue.use(NowUiKit);
-Vue.use(VueScheduler,{ locale: 'fr'});
 Vue.use(VueAxios, axios);
 Vue.use(Vuex);
 

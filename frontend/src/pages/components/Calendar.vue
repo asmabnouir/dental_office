@@ -1,101 +1,387 @@
 <template>
 <div>
-  <div class="calendar-container">
-        <h4 >Prendre RDV</h4>
-        <div class="row">
-          <div class="test col-md-10 ">
-            <!-----
-            <div class="datepicker-container">
-              <fg-input>
-                <el-date-picker
-                  type="date"
-                  popper-class="date-picker date-picker-primary"
-                  placeholder="Date Time Picker"
-                  v-model="pickers.datePicker"
-                >
-                </el-date-picker>
-              </fg-input>
-            </div>
-            ----->
-            <vue-scheduler
-            :time-range="[8,16]"
-            locale="fr"
-            initial-view="week"
-             @time-clicked="timeClicked"
-             @event-created="eventCreated"
-             :events="events"
-             />
-          </div>
-        </div>
-        <div><button @click.prevent="getIndex()">mon test get </button></div>
+  <div class="calendar">
+    <div>
+      <header>
+      <button @click.prevent="getToday()" class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
+      <div class="calendar__title" style="display: flex; justify-content: center; align-items: center">
+        <div @click.prevent="down()" class="icon secondary chevron_left">‹</div>
+        <h1 class="" style="flex: 1;"><span></span><strong>{{calendarWeek.weekRange}}</strong> </h1>
+        <div @click.prevent="up()" class="icon secondary chevron_left">›</div>
+      </div>
+      <div style="align-self: flex-start; flex: 0 0 1"></div>
+  </header>
+    <div class="outer">
+    <table>
+    <thead>
+      <tr>
+        <th class="headcol"></th>
+        <th  v-for="(day, index) in weekdays" :key="index">{{day}} {{calendarWeek.weekDates[index].getDate()}}</th>
+      </tr>
+    </thead>
+    </table>
     </div>
-  <div
-    class="navigation-example"
-    style="background-image:url('img/GSD_2.jpg');
-            background-attachment: fixed;"
-  ></div>
+
+    <div class="wrap">
+  <table>
+    <tbody>
+      <tr v-for="(time, index) in times" :key="index">
+      <td class="headcol">{{time}}</td>
+      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index"  @click="getInfo(dayDate, time)">
+      </td>
+    </tr>
+    </tbody>
+  </table>
+    </div>
+      </div>
 </div>
-
+  </div>
 </template>
-
 <script>
-import axios from 'axios';
+import { FormGroupInput } from '@/components';
+import {DatePicker} from 'element-ui';
+
     export default {
 
       name: 'calendar',
       components: {
+        [DatePicker.name]: DatePicker,
+        [FormGroupInput.name]: FormGroupInput
       },
       data() {
         return {
-          events:[],
-            error:"",
+        weekdays: ['Lu','Ma','Me','J','Ve','Sa','Di'],
+        times:[],
+        calendarWeek: {
+          weekNo: 0,
+          weekRange: '',
+          startDate: 0,
+          weekDates:[]
+        },
+        startWeek:0,
+        event:{
+          time:'',
+          date:'',
+        },
+        };
+      },
+      computed: {
+      },
+    methods: {
+      ///////calendar display dealing /////////
+      ////////////////////////////////////////
+      generateTimes(x,hs,he){
+      // x = minutes interval
+      // hs = start hour
+      // he= end time
+        var times = []; // time array
+        var tt = hs*60; // start time
+
+        //loop to increment the time and push results in array
+        for (var i=0;tt<he*60; i++) {
+          var hh = Math.floor(tt/60); // getting hours of day in 0-24 format
+          var mm = (tt%60); // getting minutes of the hour in 0-55 format
+          times[i] = ("0" + (hh % 24)).slice(-2) + ':' + ("0" + mm).slice(-2) ; // pushing data in array in [00:00 - 12:00 AM/PM format]
+          tt = tt + x;
+        }
+        this.times=times;
+      },
+
+      /////////////calendar Date dealing /////////
+
+      //formatter les dates
+        formatDate(date){
+          return new Intl.DateTimeFormat('fr').format(date)
+        },
+        getInfo(a, b){
+          //this.event = value;
+          console.log(a, b)
+        },
+       //get the week number
+      CurrentWeek(){
+      var date = new Date();
+      date.setHours(0, 0, 0, 0);
+      // Thursday in current week decides the year.
+      date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+      // January 4 is always in week 1.
+      var week1 = new Date(date.getFullYear(), 0, 4);
+      // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+      var res =  1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                            - 3 + (week1.getDay() + 6) % 7) / 7);
+      this.calendarWeek.weekNo= res;
+      this.startWeek = res;
+      return res;
+      },
+      CurrentWeekYear(){
+       var date = new Date();
+        date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+        return date.getFullYear();
+      },
+      //get a range of the weekNo date from monday date to sunday
+      getDateRangeOfWeek(){
+        var startDay = 1;
+        let y = this.CurrentWeekYear();
+        let w =  this.calendarWeek.weekNo;
+        let weekStart = new Date(y, 0, (1 + (w - 1) * 7));
+         weekStart.setDate(weekStart.getDate() + (startDay - weekStart.getDay())); // 0 - Sunday, 1 - Monday etc
+        let weekEnd = new Date(weekStart.valueOf() + 6*86400000); //add 6 days to get last day
+        this.calendarWeek.startDate = weekStart; //console.log(new Intl.DateTimeFormat('fr').format(date));
+        this.calendarWeek.weekRange = this.formatDate(weekStart)+ ' à '+ this.formatDate(weekEnd);
+        return this.formatDate(weekStart),  this.formatDate(weekEnd);
+        },
+        //get weeks dates
+        getWeekDates(){
+        this.calendarWeek.weekDates = [];
+        let dStart= this.calendarWeek.startDate ;
+        this.weekdays.forEach((d, i) =>
+        { var date = new Date( dStart.valueOf() +i*86400000);
+         this.calendarWeek.weekDates.push(date);
+        return date;
+        });
+        },
+        //rebuild the calendar depending on the currentweek saved in data
+        displayCalendar(){
+            this.getDateRangeOfWeek()
+            this.getWeekDates()
+        },
+
+      //moving in calendar
+      up(){
+        this.calendarWeek.weekNo +=1;
+        this.displayCalendar();
+        },
+      down(){
+        if (this.startWeek<this.calendarWeek.weekNo) {
+          this.calendarWeek.weekNo -=1 ;
+          this.displayCalendar();
         }
       },
-      computed:{
+      getToday(){
+      this.CurrentWeek();
+      this.displayCalendar();
       },
-      methods: {
-      timeClicked(dateWithTime) {
-            console.log('Time clicked');
-            console.log('Date: ' + dateWithTime.date );
-            console.log('Time: ' + dateWithTime.time );
-            //console.dir(this.events);
-      },
-      eventCreated(dateWithTime){
-        axios.post('http://localhost:8000/api/event/create',  {
-            event_date:dateWithTime.date,
-            start_time:dateWithTime.time,
-        }).then(response=>{
-          console.dir(response);
-        })
-      },
-      getIndex(){
-        axios.get('http://localhost:8000/api/event/index',  {
-        }).then(response=>{
-          console.dir(response.data);
-          this.events=response.data;
-          console.dir(this.events);
-        }).catch(error=>{
-        console.log(error.message)
-        });
-      },
-    }
+    },
 
-    }
+    /////////////calendar build /////////
+
+    created() {
+    //build the times slots
+    this.generateTimes(30,8,17);
+    this.getToday();
+    },
+    };
     </script>
-    <style scoped media="scss" lang="scss">
-      .navigation-example{
-          min-height: 500px !important;
-      }
-      .calendar-container{
-        h4{text-align: center};
-        margin:80px auto;
-        padding: 40px ;
-        text-align: center
-      };
-      .v-cal-header{
-        padding: 0 !important;
-      }
-     .test{
-       margin:auto;
-     }
-    </style>
+
+<style lang="scss" scoped>
+* {
+  margin: 0;
+  border: 0;
+}
+.outer {
+  position:relative;
+}
+
+.calendar {
+  position:relative;
+  margin: 20px auto;
+  max-width: 1280px;
+  min-width: 500px;
+  height:900px;
+  overflow-y: hidden;
+  box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.2) ,0px 3px 7px rgba(0, 0, 0, 0.1);
+  >div{
+    height:900px;
+    position:absolute;
+  }
+}
+
+.wrap {
+  overflow-y: hidden; 
+  overflow-x: hidden; 
+  max-width: 1280px;
+  margin-top:40px;
+}
+
+thead {
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+thead th {
+
+  text-align: center;
+  width: 100%;
+
+}
+
+header {
+  background: #fff;
+  padding: 1rem;
+  color: rgba(0, 0, 0, 0.7);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px 8px 0px 0px;
+}
+
+header h1 {
+ font-size: 1.25rem;
+ text-align: center;
+ font-weight: normal;
+
+}
+tbody {
+  position: relative;
+}
+table {
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+}
+
+
+
+.headcol {
+  width: 60px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 0.25rem 0;
+  text-align: center;
+  border: 0;
+  position: relative;
+  top: -12px;
+  border-bottom: 1px solid transparent;
+}
+
+thead th {
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.9);
+  padding: 1rem;
+}
+
+thead {
+    z-index: 2;
+    background: white;
+    border-bottom: 2px solid #ddd;
+
+}
+
+tr, tr td {
+  height: 20px;
+}
+td {
+  text-align: center;
+}
+tr:nth-child(odd) td:not(.headcol) {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+tr:nth-child(even) td:not(.headcol) {
+  border-bottom: 1px solid #eee;
+}
+
+tr td {
+  border-right: 1px solid #eee;
+  padding: 0;
+  white-space: none;
+  word-wrap: nowrap;
+}
+
+tbody tr td {
+  position: relative;
+  vertical-align: top;
+  height: 40px;
+  padding: 0.25rem 0.25rem 0 0.25rem;
+  width: auto;
+
+}
+
+.secondary {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+
+.event {
+  background: #00B4FC;
+  color: white;
+  border-radius: 2px;
+  text-align: left;
+  font-size: 0.875rem;
+  z-index: 2;
+  padding: 0.5rem;
+  overflow-x: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.event:hover {
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  background: #00B4FC;
+}
+
+td:hover:after {
+  content: "+";
+  vertical-align: middle;
+  font-size: 1.875rem;
+  font-weight: 100;
+  color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+}
+
+button.secondary {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 0.5rem 0.75rem;
+  font-size: 14px;
+  border-radius: 2px;
+  color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button.secondary:hover {
+  background: #fafafa;
+}
+button.secondary:active {
+  box-shadow: none;
+}
+button.secondary:focus {
+  outline: 0;
+}
+
+tr td:nth-child(2), tr td:nth-child(3), .past {
+  background: #fafafa;
+}
+
+.today {
+  color: red;
+}
+
+.now {
+  box-shadow: 0px -1px 0px 0px red;
+}
+
+.icon {
+  font-size: 1.5rem;
+  margin: 0 1rem;
+  text-align: center;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}
+
+.icon:hover {
+  color: red;
+}
+
+</style>
+

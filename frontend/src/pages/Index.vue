@@ -16,6 +16,11 @@
     </div>
     <tabs-section id="services"></tabs-section>
     <calendar id="calendar"></calendar>
+        <div
+    class="navigation-example"
+    style="background-image:url('img/GSD_2.jpg');
+            background-attachment: fixed;"
+  ></div>
     <contact id="contact"></contact>
 
   </div>
@@ -35,9 +40,11 @@ export default {
     TabsSection,
     Calendar,
     Contact
-  },
-  
+  }
 };
 </script>
 <style Scoped lang="scss">
+   .navigation-example{
+          min-height: 500px !important;
+      }
 </style>
