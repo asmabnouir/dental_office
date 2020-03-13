@@ -27,8 +27,8 @@
     <tbody>
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
-      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index"  @click="getInfo(dayDate, time)">
-          {{ displayEvent(dayDate, time) }}
+      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index" >
+       <div v-show="displayEvent(dayDate, time)" class="event" @click="select(dayDate,time)">{{formatDate(dayDate)}}<br>{{time}}</div>
       </td>
     </tr>
     </tbody>
@@ -51,6 +51,7 @@ import {DatePicker} from 'element-ui';
       },
       data() {
         return {
+          error:'',
         weekdays: ['Lu','Ma','Me','J','Ve','Sa','Di'],
         times:[],
         calendarWeek: {
@@ -90,10 +91,6 @@ import {DatePicker} from 'element-ui';
       //formatter les dates
         formatDate(date){
           return new Intl.DateTimeFormat('fr').format(date)
-        },
-        getInfo(a, b){
-          //this.event = value;
-          console.log(a, b)
         },
        //get the week number
       CurrentWeek(){
@@ -158,13 +155,25 @@ import {DatePicker} from 'element-ui';
       this.CurrentWeek();
       this.displayCalendar();
       },
+      //display Events
       displayEvent(dayDate, time) {
-        return this.events.find(el => {
-          return (el.date === dayDate && el.time === time)
-        })
+        return this.events.find(el=>{
+           return el.event_date === this.formatDate(dayDate) && el.start_time === time
+        });
       },
-    },
+      //select Events
+      select(dayDate, time){
+        //add this event to the user_event table with axios
+       let  mySelect= this.displayEvent(dayDate, time)
+       axios.post('http://localhost:8000/api/event/selest',{
+         mySelect
+       })
+        //change background color
+        //turn select off
+      }
 
+    },
+       //
 
 
     /////////////calendar build /////////
@@ -175,8 +184,9 @@ import {DatePicker} from 'element-ui';
     this.getToday();
     this.axios.get('http://localhost:8000/api/event/index',  {
         }).then(response=>{
-          console.dir(response.data);
-          //this.events= respone.data;
+          //console.dir(response.data);
+          this.events = response.data
+          //console.log(this.events);
         }).catch(error=>{
         console.log(error.message)
         });
@@ -208,8 +218,8 @@ import {DatePicker} from 'element-ui';
 }
 
 .wrap {
-  overflow-y: hidden; 
-  overflow-x: hidden; 
+  overflow-y: hidden;
+  overflow-x: hidden;
   max-width: 1280px;
   margin-top:40px;
 }
@@ -367,10 +377,6 @@ button.secondary:active {
 }
 button.secondary:focus {
   outline: 0;
-}
-
-tr td:nth-child(2), tr td:nth-child(3), .past {
-  background: #fafafa;
 }
 
 .today {

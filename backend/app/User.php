@@ -29,6 +29,10 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
+    public function events(){
+        return $this->hasMany('App\Event')
+    }
+
     /**
      * The attributes that should be cast to native types.
      *

@@ -13,5 +13,9 @@ class Event extends Model
      */
     protected $table = 'events';
 
+    function user(){
+        return $this->belongsTo('App\User');
+    }
+
 }
 
