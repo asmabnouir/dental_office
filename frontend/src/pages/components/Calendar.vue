@@ -28,7 +28,7 @@
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index" >
-       <div v-show="displayEvent(dayDate, time)" class="event" @click="select(dayDate,time)">{{formatDate(dayDate)}}<br>{{time}}</div>
+       <div v-show="displayEvent(dayDate, time)"  class = "event" @click="select(dayDate,time)">{{formatDate(dayDate)}}<br>{{time}} {{displayEvent(dayDate, time)}}</div>
       </td>
     </tr>
     </tbody>
@@ -41,9 +41,10 @@
 <script>
 import { FormGroupInput } from '@/components';
 import {DatePicker} from 'element-ui';
+import axios from 'axios';
 
     export default {
-
+        // 
       name: 'calendar',
       components: {
         [DatePicker.name]: DatePicker,
@@ -58,10 +59,12 @@ import {DatePicker} from 'element-ui';
           weekNo: 0,
           weekRange: '',
           startDate: 0,
-          weekDates:[]
+          weekDates:[],
         },
         startWeek:0,
         events:[],
+        selected:false,
+        event_id:null,
       }
       },
       computed: {
@@ -163,13 +166,21 @@ import {DatePicker} from 'element-ui';
       },
       //select Events
       select(dayDate, time){
-        //add this event to the user_event table with axios
-       let  mySelect= this.displayEvent(dayDate, time)
-       axios.post('http://localhost:8000/api/event/selest',{
-         mySelect
-       })
-        //change background color
+        //add ths id of the current_user to the event table with axios
+       let  id= this.displayEvent(dayDate, time).id;
+      console.log(id);
+       axios.post('http://localhost:8000/api/event/select',{
+        id : id,
+        token:  this.$store.state.token
+       }).then(response=>{
+         console.log(response.data);
+        // hide the selected rdv 
+        this.selected=true ; 
+       }).catch(error=>{
+        console.log(error.message)
+        });
         //turn select off
+
       }
 
     },
@@ -182,13 +193,14 @@ import {DatePicker} from 'element-ui';
     //build the times slots
     this.generateTimes(30,8,17);
     this.getToday();
+    console.log(this.$store.state.token);
     this.axios.get('http://localhost:8000/api/event/index',  {
         }).then(response=>{
           //console.dir(response.data);
           this.events = response.data
           //console.log(this.events);
         }).catch(error=>{
-        console.log(error.message)
+        console.log(error.message);
         });
     },
     };
@@ -329,8 +341,10 @@ tbody tr td {
   color: rgba(0, 0, 0, 0.4);
 }
 
-
-.event {
+.event_selected{
+  background: rgb(252, 134, 0)! important;
+}
+.event{
   background: #00B4FC;
   color: white;
   border-radius: 2px;
@@ -345,7 +359,6 @@ tbody tr td {
 
 .event:hover {
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  background: #00B4FC;
 }
 
 td:hover:after {

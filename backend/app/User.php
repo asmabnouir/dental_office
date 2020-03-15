@@ -30,7 +30,7 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     public function events(){
-        return $this->hasMany('App\Event')
+        return $this->hasMany('App\Event');
     }
 
     /**

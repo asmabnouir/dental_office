@@ -76,7 +76,6 @@ import MainFooter from '@/layout/MainFooter';
 import axios from 'axios';
 import { Bus } from '../main';
 
-
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
@@ -99,24 +98,24 @@ export default {
     methods:{
       login(){
         if (!this.user.email && !this.user.password ) {
-           this.errors.push('email or Password required.');
+           this.error.push('email or Password required.');
         } else {
           axios.post('http://localhost:8000/api/auth/login',{
             email:this.user.email,
-            password:this.user.paswword
+            password:this.user.password
         }).then(response =>{
           console.log(response.data);
           this.$store.state.token =response.data.access_token
           this.$store.commit("loginSuccess", response);
          this.$router.push({ name: 'profile'});
         }).catch(error=>{
-        console.log(error.message)
+        console.log(error.message);
         })
         console.log("login function");
         }
       },
 
-    }
+    },
 
 };
 </script>

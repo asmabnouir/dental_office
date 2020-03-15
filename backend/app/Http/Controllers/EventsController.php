@@ -33,11 +33,16 @@ class EventsController extends Controller
         $event->start_time = $time;
         $event->save();
         return response($event);
-        //Event::create($request->all());
     }
 
     //Fonctions Client
+
     public function select(Request $request){
-        $id=$request->id;
+        $event=Event::find($request->id);
+        $user = auth()->user($request->token);
+        $user_id=$user->id;
+        $event->user_id = $user_id;
+        //$event->save();
+        return $event;
     }
 }

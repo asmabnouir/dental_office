@@ -96,9 +96,8 @@ export default {
            axios.post('http://localhost:8000/api/auth/register',{
              name:this.user.name,
             email:this.user.email,
-            password:this.user.paswword
+            password:this.user.password
         }).then(response =>{
-          console.log(response.data)
           this.$router.push({ name: 'login'});
         }).catch(error=>{
         console.log(error.message )
