@@ -36,6 +36,7 @@ Route::group([
     Route::post('create', 'EventsController@create');
     Route::get('index', 'EventsController@index');
     Route::post('select', 'EventsController@select');
+    Route::post('unselect', 'EventsController@unselect');
     Route::post('delete', 'EventsController@delete');
 });
 

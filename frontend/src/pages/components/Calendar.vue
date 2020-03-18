@@ -28,7 +28,13 @@
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index" >
-       <div v-show="displayEvent(dayDate, time)"  class = "event" @click="select(dayDate,time)">{{formatDate(dayDate)}}<br>{{time}} {{displayEvent(dayDate, time)}}</div>
+       <div v-show="displayEvent(dayDate, time)"
+        class="event"
+       @click="toggleSelect(dayDate, time) ; toggleClass($event,'event_selected')" >
+          {{displayEvent(dayDate,time)}}
+         {{formatDate(dayDate)}}
+         <br>{{time}}
+         </div>
       </td>
     </tr>
     </tbody>
@@ -44,7 +50,7 @@ import {DatePicker} from 'element-ui';
 import axios from 'axios';
 
     export default {
-        // 
+        //
       name: 'calendar',
       components: {
         [DatePicker.name]: DatePicker,
@@ -64,7 +70,7 @@ import axios from 'axios';
         startWeek:0,
         events:[],
         selected:false,
-        event_id:null,
+        event_user_id:0,
       }
       },
       computed: {
@@ -158,34 +164,62 @@ import axios from 'axios';
       this.CurrentWeek();
       this.displayCalendar();
       },
+      addCalss($event, className){
+      $event.target.classList.add(className);
+      },
       //display Events
       displayEvent(dayDate, time) {
         return this.events.find(el=>{
-           return el.event_date === this.formatDate(dayDate) && el.start_time === time
+            let e =  el.event_date === this.formatDate(dayDate) && el.start_time === time;
+            if(el.user_id=== this.$store.state.userId){
+              el.isSelected= true
+            }
+            if(el.user_id=== 0){
+              el.isSelected= false
+            }
+            return e
         });
+
       },
       //select Events
-      select(dayDate, time){
-        //add ths id of the current_user to the event table with axios
+      toggleClass($event, className){
+         $event.target.classList.toggle(className);
+      },
+      toggleSelect(dayDate, time){
+        //select an event
+        //add ths id of the current_user to event.user_id
        let  id= this.displayEvent(dayDate, time).id;
-      console.log(id);
-       axios.post('http://localhost:8000/api/event/select',{
+       let isSelected = this.displayEvent(dayDate,time).isSelected
+        console.log(isSelected)
+        if (isSelected ===false) {
+        axios.post('http://localhost:8000/api/event/select',{
         id : id,
         token:  this.$store.state.token
        }).then(response=>{
-         console.log(response.data);
-        // hide the selected rdv 
-        this.selected=true ; 
+        isSelected=true;
+        console.log(isSelected)
        }).catch(error=>{
-        console.log(error.message)
+        console.log(error)
+        if(error.message === "Request failed with status code 401"){
+           this.$router.push({ name: 'login'});
+        }
         });
-        //turn select off
-
+        }
+        //unselect an event
+        //put event.user_id to 0
+        else {
+        axios.post('http://localhost:8000/api/event/unselect',{
+       }).then(response=>{
+         console.log(response.data);
+        isSelected=false;
+        console.log(isSelected)
+       }).catch(error=>{
+         console.log(error.message)
+        });
+        }
       }
 
     },
-       //
-
 
     /////////////calendar build /////////
 
@@ -193,7 +227,6 @@ import axios from 'axios';
     //build the times slots
     this.generateTimes(30,8,17);
     this.getToday();
-    console.log(this.$store.state.token);
     this.axios.get('http://localhost:8000/api/event/index',  {
         }).then(response=>{
           //console.dir(response.data);
@@ -344,8 +377,10 @@ tbody tr td {
 .event_selected{
   background: rgb(252, 134, 0)! important;
 }
+
 .event{
-  background: #00B4FC;
+  
+ background: #00B4FC;
   color: white;
   border-radius: 2px;
   text-align: left;

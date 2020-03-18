@@ -52,7 +52,6 @@ class AuthController extends Controller
         if (!$token) {
             var_dump($credentials) ;
             return  response()->json(['error' => 'Unauthorized'], 401);
-            
         }
         return $this->respondWithToken($token);
     }
@@ -72,9 +71,9 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(request $request)
     {   
-        $token = auth()->tokenById(auth()->user()->id);
+        $token = $request->token;
         auth()->invalidate($token);
         auth()->invalidate(true);
         auth()->logout();

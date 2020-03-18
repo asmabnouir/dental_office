@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 use App\Event;
 class EventsController extends Controller
 {
+     /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+       //$this->middleware('auth')->except(['index']);
+    }
+
+
     //fonctions Globales
     public function index(){
         $data=Event::all();
@@ -21,6 +32,7 @@ class EventsController extends Controller
         return $data->tojson(); //$data is an object converted to json
        // return  Event::all();
     }
+
     //fonction admin
     public function create(Request $request)
     {
@@ -42,7 +54,14 @@ class EventsController extends Controller
         $user = auth()->user($request->token);
         $user_id=$user->id;
         $event->user_id = $user_id;
-        //$event->save();
+        $event->save();
         return $event;
     }
+    public function unselect(Request $request){
+        $event=Event::find($request->id);
+        $event->user_id = 0;
+        $event->save();
+        return $event;
+    }
+
 }

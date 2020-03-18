@@ -105,7 +105,8 @@ export default {
             password:this.user.password
         }).then(response =>{
           console.log(response.data);
-          this.$store.state.token =response.data.access_token
+          this.$store.state.token =response.data.access_token;
+          this.$store.state.userId = response.data.user.id;
           this.$store.commit("loginSuccess", response);
          this.$router.push({ name: 'profile'});
         }).catch(error=>{
