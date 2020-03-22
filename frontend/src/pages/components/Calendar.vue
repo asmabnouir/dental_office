@@ -169,18 +169,26 @@ import axios from 'axios';
       },
       //display Events
       displayEvent(dayDate, time) {
+      if ( this.$store.state.token ) {
         return this.events.find(el=>{
-            let e =  el.event_date === this.formatDate(dayDate) && el.start_time === time;
-            if(el.user_id=== this.$store.state.userId){
-              el.isSelected= true
-            }
-            if(el.user_id=== 0){
-              el.isSelected= false
-            }
-            return e
-        });
-
-      },
+          if( el.event_date === this.formatDate(dayDate) && el.start_time === time && el.user_id === 0 ){
+          el.selected=false
+          return el
+          }
+          if( el.event_date === this.formatDate(dayDate) && el.start_time === time &&  el.user_id == this.$store.state.userId ){
+          el.selected=true
+          return el
+          }
+          });
+      }
+      else{
+      return this.events.find(el=>{
+          if( el.event_date === this.formatDate(dayDate) && el.start_time === time && el.user_id === 0 ){
+          return el
+          }
+          });
+      }
+    },
       //select Events
       toggleClass($event, className){
          $event.target.classList.toggle(className);
