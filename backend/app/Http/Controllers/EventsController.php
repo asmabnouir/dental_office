@@ -51,17 +51,22 @@ class EventsController extends Controller
 
     public function select(Request $request){
         $event=Event::find($request->id);
-        $user = auth()->user($request->token);
-        $user_id=$user->id;
-        $event->user_id = $user_id;
-        $event->save();
-        return $event;
+        if($event->user_id === 0 ){
+            $user = auth()->user($request->token);
+            $user_id=$user->id;
+            $event->user_id = $user_id;
+            $event->save();
+            return $event;
+        }
     }
     public function unselect(Request $request){
+        $user_id = auth()->user($request->token)->id;
         $event=Event::find($request->id);
+        if($event->user_id === $user_id){
         $event->user_id = 0;
         $event->save();
         return $event;
+        }
     }
 
 }

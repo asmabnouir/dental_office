@@ -30,6 +30,7 @@ import { Parallax } from '@/components';
 import TabsSection from './components/Tabs';
 import Calendar from './components/Calendar';
 import Contact from './components/Contact';
+import axios from 'axios';
 
 
 export default {
@@ -40,7 +41,23 @@ export default {
     TabsSection,
     Calendar,
     Contact
-  }
+  },
+  methods:{
+    getUser(){
+      axios.post('http://localhost:8000/api/auth/me',{token:this.$store.state.token}).then(response =>{
+      //console.log(response.data);
+      this.$store.state.userId = response.data.id
+      console.log(this.$store.state.userId);
+      }).catch(error=>{
+      console.log(error.message);
+      })
+  },
+  },
+  created(){
+      if (this.$store.getters.isLoggedIn) {
+         this.getUser();
+      }
+    }
 };
 </script>
 <style Scoped lang="scss">
