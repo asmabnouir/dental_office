@@ -27,14 +27,14 @@
     <tbody>
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
-      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index" >
+      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index"   >
        <div v-show="displayEvent(dayDate, time)"
         class="event"
-       @click="toggleSelect(dayDate, time) ; toggleClass($event,'event_selected')" >
+        @click="toggleSelect(dayDate, time)" >
           {{displayEvent(dayDate,time)}}
          {{formatDate(dayDate)}}
          <br>{{time}}
-         </div>
+        </div>
       </td>
     </tr>
     </tbody>
@@ -164,9 +164,6 @@ import axios from 'axios';
       this.CurrentWeek();
       this.displayCalendar();
       },
-      addCalss($event, className){
-      $event.target.classList.add(className);
-      },
       //display Events
       displayEvent(dayDate, time) {
       if ( this.$store.state.token ) {
@@ -189,43 +186,61 @@ import axios from 'axios';
           });
       }
     },
-      //select Events
+      //working on class
       toggleClass($event, className){
          $event.target.classList.toggle(className);
       },
-      toggleSelect(dayDate, time){
+      addCalss($event, className){
+      $event.target.classList.add(className);
+      },
+      removeClass($event, className){
+      $event.target.classList.remove(className);
+      },
+      toggleSelect(dayDate, time,$event){
         //select an event
         //add ths id of the current_user to event.user_id
-       let  id= this.displayEvent(dayDate, time).id;
-       let isSelected = this.displayEvent(dayDate,time).isSelected
-        console.log(isSelected)
-        if (isSelected ===false) {
-        axios.post('http://localhost:8000/api/event/select',{
-        id : id,
+       let  currentEvent_id= this.displayEvent(dayDate, time).id;
+       let currentEvent=this.events.find(el =>{el.id = currentEvent_id ; return el});
+        if (this.displayEvent(dayDate, time).user_id===0) {
+        axios.post('http://localhost:8000/api/event/client/select',{
+        id : currentEvent_id,
         token:  this.$store.state.token
        }).then(response=>{
-        isSelected=true;
-        console.log(isSelected)
+        // this.addClass($event,'event_selected');
+        currentEvent.user_id = response.data.user_id;
        }).catch(error=>{
-        console.log(error)
-        if(error.message === "Request failed with status code 401"){
+         if (error.message == 'Request failed with status code 401') {
            this.$router.push({ name: 'login'});
-        }
+         }
         });
         }
         //unselect an event
         //put event.user_id to 0
         else {
-        axios.post('http://localhost:8000/api/event/unselect',{
+        axios.post('http://localhost:8000/api/event/client/unselect',{
+        id : currentEvent_id,
+        token:  this.$store.state.token
        }).then(response=>{
-         console.log(response.data);
-        isSelected=false;
-        console.log(isSelected)
+         //this.removeClass($event,'event_selected');
+         currentEvent.user_id = 0;
        }).catch(error=>{
          console.log(error.message)
         });
         }
-      }
+      },
+
+          //adminside 
+    createEvent(dayDate, time){
+      axios.post('http://localhost:8000/api/event/create',  {
+        event_date: dayDate ,
+        start_time: time, 
+        token:  this.$store.state.token
+        }).then(response=>{
+          console.dir(response.data);
+        }).catch(error=>{
+        console.log(error.message);
+        });
+    },
 
     },
 

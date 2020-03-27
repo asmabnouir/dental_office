@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-//use Illuminate\Support\Facades\Hash;
 use App\User;
 class AuthController extends Controller
 {
@@ -30,7 +29,7 @@ class AuthController extends Controller
         User::create([
             'name' => request('name'),
             'email' => request('email'),
-            'password' => \Hash::make(request('password'))
+            'password' => \Hash::make(request('password')),
         ]);
     }
 
@@ -72,7 +71,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(request $request)
-    {   
+    {
         $token = $request->token;
         auth()->invalidate($token);
         auth()->invalidate(true);

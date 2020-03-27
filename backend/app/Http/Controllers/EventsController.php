@@ -7,15 +7,6 @@ use Illuminate\Http\Request;
 use App\Event;
 class EventsController extends Controller
 {
-     /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-       //$this->middleware('auth')->except(['index']);
-    }
 
 
     //fonctions Globales
@@ -33,40 +24,5 @@ class EventsController extends Controller
        // return  Event::all();
     }
 
-    //fonction admin
-    public function create(Request $request)
-    {
-        $event = new Event;
-        $date=$request->event_date;
-        $time=$request->start_time;
-        $date=date('Y-m-d', strtotime($date));
-        $time=date('h:i:s', strtotime($time));
-        $event->event_date = $date;
-        $event->start_time = $time;
-        $event->save();
-        return response($event);
-    }
-
-    //Fonctions Client
-
-    public function select(Request $request){
-        $event=Event::find($request->id);
-        if($event->user_id === 0 ){
-            $user = auth()->user($request->token);
-            $user_id=$user->id;
-            $event->user_id = $user_id;
-            $event->save();
-            return $event;
-        }
-    }
-    public function unselect(Request $request){
-        $user_id = auth()->user($request->token)->id;
-        $event=Event::find($request->id);
-        if($event->user_id === $user_id){
-        $event->user_id = 0;
-        $event->save();
-        return $event;
-        }
-    }
-
+    
 }

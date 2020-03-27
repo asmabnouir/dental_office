@@ -33,11 +33,12 @@ Route::group([
     'prefix' => 'event'
 
 ], function () {
-    Route::post('create', 'EventsController@create');
+    Route::post('create', 'AdminController@create');
     Route::get('index', 'EventsController@index');
-    Route::post('select', 'EventsController@select');
-    Route::post('unselect', 'EventsController@unselect');
-    Route::post('delete', 'EventsController@delete');
+    Route::post('client/select','clientController@select');
+    Route::post('client/unselect', 'clientController@unselect');
+   // Route::post('delete', 'AdminController@delete');
 });
+
 
 
