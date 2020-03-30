@@ -7,7 +7,8 @@ export default({
     state: {
         isLoggedIn: !!user,
         token:user,
-        userId:0,
+        userId :0,
+        name:"",
     },
     getters:{
         isLoggedIn(state) {
@@ -16,8 +17,11 @@ export default({
         token(state) {
             return state.token;
         },
-        token(state) {
+        userId(state) {
             return state.userId;
+        },
+        name(state) {
+            return state.name;
         },
     },
     mutations:{
@@ -30,7 +34,8 @@ export default({
                 //localStorage.removeItem("user");
                 document.cookie = "; expires = Thu, 01 Jan 1970 00:00:00 GMT"
                 state.isLoggedIn = false;
-                state.userId = 0;
+                state.name = "";
+                state.userId
                 state.token = null;
             },
 

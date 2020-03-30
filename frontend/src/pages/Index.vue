@@ -46,8 +46,8 @@ export default {
     getUser(){
       axios.post('http://localhost:8000/api/auth/me',{token:this.$store.state.token}).then(response =>{
       //console.log(response.data);
-      this.$store.state.userId = response.data.id
-      console.log(this.$store.state.userId);
+      this.$store.state.userId = response.data.id;
+       this.$store.state.name = response.data.name
       }).catch(error=>{
       console.log(error.message);
       })

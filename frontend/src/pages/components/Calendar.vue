@@ -24,15 +24,30 @@
 
     <div class="wrap">
   <table>
-    <tbody>
+    <tbody v-if="$store.getters.name === 'admin'">
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
-      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index"   >
-       <div v-show="displayEvent(dayDate, time)"
+      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
+       <div v-if="displayEventA(dayDate, time)"
         class="event"
         @click="toggleSelect(dayDate, time)" >
-          {{displayEvent(dayDate,time)}}
-         {{formatDate(dayDate)}}
+          {{displayEventA(dayDate,time)}}
+        </div>
+        <div v-else class="empty" @click="createEvent(dayDate, time,$event)">
+
+        </div>
+      </td>
+    </tr>
+    </tbody>
+    <tbody v-else>
+      <tr v-for="(time, index) in times" :key="index">
+      <td class="headcol">{{time}}</td>
+      <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
+       <div v-show="displayEventC(dayDate, time)"
+        class="event"
+        @click="toggleSelect(dayDate, time)" >
+          {{displayEventC(dayDate,time)}}
+          {{formatDate(dayDate)}}
          <br>{{time}}
         </div>
       </td>
@@ -76,8 +91,8 @@ import axios from 'axios';
       computed: {
       },
     methods: {
-      ///////calendar display dealing /////////
-      ////////////////////////////////////////
+      ///////////////////////////////////////////// calendar display ////////////////////////////////////
+      
       generateTimes(x,hs,he){
       // x = minutes interval
       // hs = start hour
@@ -89,13 +104,13 @@ import axios from 'axios';
         for (var i=0;tt<he*60; i++) {
           var hh = Math.floor(tt/60); // getting hours of day in 0-24 format
           var mm = (tt%60); // getting minutes of the hour in 0-55 format
-          times[i] = ("0" + (hh % 24)).slice(-2) + ':' + ("0" + mm).slice(-2) ; // pushing data in array in [00:00 - 12:00 AM/PM format]
+          times[i] = ("0" + (hh % 24)).slice(-2) + ':' + ("0" + mm).slice(-2) ; // pushing data in array 
           tt = tt + x;
         }
         this.times=times;
       },
 
-      /////////////calendar Date dealing /////////
+      /////////////////////////////////////////////  calendar dates  ////////////////////////////////////
 
       //formatter les dates
         formatDate(date){
@@ -113,7 +128,7 @@ import axios from 'axios';
       var res =  1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
                             - 3 + (week1.getDay() + 6) % 7) / 7);
       this.calendarWeek.weekNo= res;
-      this.startWeek = res;
+      this.startWeek = res; 
       return res;
       },
       CurrentWeekYear(){
@@ -138,6 +153,7 @@ import axios from 'axios';
         this.calendarWeek.weekDates = [];
         let dStart= this.calendarWeek.startDate ;
         this.weekdays.forEach((d, i) =>
+        //86400000 (1000*60*60*24) - number of milliseconds in one day:
         { var date = new Date( dStart.valueOf() +i*86400000);
          this.calendarWeek.weekDates.push(date);
         return date;
@@ -164,8 +180,11 @@ import axios from 'axios';
       this.CurrentWeek();
       this.displayCalendar();
       },
+
+       ///////////////////////////////////////////// calendar Events Client side  ////////////////////////////////////
+      
       //display Events
-      displayEvent(dayDate, time) {
+      displayEventC(dayDate, time) {
       if ( this.$store.state.token ) {
         return this.events.find(el=>{
           if( el.event_date === this.formatDate(dayDate) && el.start_time === time && el.user_id === 0 ){
@@ -228,23 +247,38 @@ import axios from 'axios';
         });
         }
       },
+          ///////////////////////////////////////////// calendar Events Admin side  ////////////////////////////////////
 
-          //adminside 
-    createEvent(dayDate, time){
+            //display Events
+      displayEventA(dayDate, time) {
+          //console.log(this.formatDate(dayDate));
+        return this.events.find(el=>{
+          if( el.event_date === this.formatDate(dayDate) && el.start_time === time ){
+            console.log(el)
+          return el
+          }
+          });
+      },
+      //create free event
+    createEvent(dayDate, time, $event){
+      console.dir(dayDate);
       axios.post('http://localhost:8000/api/event/create',  {
-        event_date: dayDate ,
-        start_time: time, 
+        date: this.formatDate(dayDate) ,
+        time: time,
         token:  this.$store.state.token
         }).then(response=>{
           console.dir(response.data);
+         
+          this.events.push(response.data);
+          console.log(this.events);
+          return this.displayEventA(dayDate, time)
         }).catch(error=>{
         console.log(error.message);
         });
     },
-
     },
-
-    /////////////calendar build /////////
+  
+    /////////////////////////////////////////////  calendar build  ////////////////////////////////////
 
     created() {
     //build the times slots
@@ -252,7 +286,7 @@ import axios from 'axios';
     this.getToday();
     this.axios.get('http://localhost:8000/api/event/index',  {
         }).then(response=>{
-          //console.dir(response.data);
+         console.dir(response.data);
           this.events = response.data
           //console.log(this.events);
         }).catch(error=>{
@@ -396,6 +430,10 @@ tbody tr td {
 .secondary {
   color: rgba(0, 0, 0, 0.4);
 }
+.empty{
+  height:100%;
+  background-color: rgba(242, 225, 245, 0.719) ;
+}
 
 .event_selected{
   background: rgb(252, 134, 0)! important;
@@ -418,8 +456,7 @@ tbody tr td {
 .event:hover {
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
 }
-
-td:hover:after {
+.empty:hover:after {
   content: "+";
   vertical-align: middle;
   font-size: 1.875rem;

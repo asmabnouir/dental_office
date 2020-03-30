@@ -22,10 +22,12 @@ class AdminController extends Controller
     public function create(Request $request)
     {
         $event = new Event;
-        $date=$request->event_date;
-        $time=$request->start_time;
+        $date=$request->date;
+       // var_dump($date);
+        $time=$request->time;
         $date=date('Y-m-d', strtotime($date));
         $time=date('h:i:s', strtotime($time));
+        //var_dump($date);
         $event->event_date = $date;
         $event->start_time = $time;
         $event->user_id=0;
