@@ -37,7 +37,6 @@ import Vuex from 'vuex'
 
 Vue.config.productionTip = false;
 
-export const Bus = new Vue();
 Vue.use(NowUiKit);
 Vue.use(VueAxios, axios);
 Vue.use(Vuex);

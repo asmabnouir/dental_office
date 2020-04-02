@@ -35,4 +35,10 @@ class AdminController extends Controller
         return response($event);
     }
 
+    public function delete(Request $request)
+    {
+        $event=Event::find($request->id);
+        $event->delete();
+    }
+
 }

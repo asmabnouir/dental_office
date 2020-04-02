@@ -28,13 +28,13 @@
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
-       <div v-if="displayEventA(dayDate, time)"
-        class="event"
-        @click="toggleSelect(dayDate, time)" >
-          {{displayEventA(dayDate,time)}}
+       <div v-if="displayEventA(dayDate, time)" 
+        v-bind:class="['event' ,  ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
+        @click=" ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? deleteEvent(dayDate, time):  openMenu()"  >
+        userId {{(typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id: ''  }}
+          <ClickMenu></ClickMenu>
         </div>
         <div v-else class="empty" @click="createEvent(dayDate, time,$event)">
-
         </div>
       </td>
     </tr>
@@ -44,10 +44,11 @@
       <td class="headcol">{{time}}</td>
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
        <div v-show="displayEventC(dayDate, time)"
-        class="event"
-        @click="toggleSelect(dayDate, time)" >
-          {{displayEventC(dayDate,time)}}
-          {{formatDate(dayDate)}}
+        v-bind:class="['event' ,  ((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
+        @click="toggleSelect(dayDate, time,$event)" >
+          eventId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).id : ''  }}
+          <br>userId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : ''  }}
+          <br>{{formatDate(dayDate)}}
          <br>{{time}}
         </div>
       </td>
@@ -60,16 +61,11 @@
   </div>
 </template>
 <script>
-import { FormGroupInput } from '@/components';
-import {DatePicker} from 'element-ui';
 import axios from 'axios';
-
     export default {
         //
       name: 'calendar',
       components: {
-        [DatePicker.name]: DatePicker,
-        [FormGroupInput.name]: FormGroupInput
       },
       data() {
         return {
@@ -85,7 +81,6 @@ import axios from 'axios';
         startWeek:0,
         events:[],
         selected:false,
-        event_user_id:0,
       }
       },
       computed: {
@@ -180,29 +175,39 @@ import axios from 'axios';
       this.CurrentWeek();
       this.displayCalendar();
       },
-
+      //get events
+      getEvents(){
+        axios.get('http://localhost:8000/api/event/index',  {
+        }).then(response=>{
+          this.events = response.data
+          //console.log(this.events);
+        }).catch(error=>{
+        console.log(error.message);
+        });
+      },
        ///////////////////////////////////////////// calendar Events Client side  ////////////////////////////////////
-      
       //display Events
       displayEventC(dayDate, time) {
       if ( this.$store.state.token ) {
-        return this.events.find(el=>{
-          if( el.event_date === this.formatDate(dayDate) && el.start_time === time && el.user_id === 0 ){
-          el.selected=false
-          return el
-          }
-          if( el.event_date === this.formatDate(dayDate) && el.start_time === time &&  el.user_id == this.$store.state.userId ){
-          el.selected=true
-          return el
+        let user_ev = this.events.find(el=>{
+           if( el.event_date === this.formatDate(dayDate) && el.start_time === time  && (el.user_id === 0 || el.user_id == this.$store.state.userId) ){
+           return el
           }
           });
+        if(typeof user_ev  !== 'undefined'){
+          return user_ev
+        }
       }
       else{
-      return this.events.find(el=>{
+      let user_ev= this.events.find(el=>{
           if( el.event_date === this.formatDate(dayDate) && el.start_time === time && el.user_id === 0 ){
           return el
           }
           });
+          if(typeof user_ev  !== 'undefined'){
+          console.log(user_ev)
+          return user_ev
+        }
       }
     },
       //working on class
@@ -218,15 +223,13 @@ import axios from 'axios';
       toggleSelect(dayDate, time,$event){
         //select an event
         //add ths id of the current_user to event.user_id
-       let  currentEvent_id= this.displayEvent(dayDate, time).id;
-       let currentEvent=this.events.find(el =>{el.id = currentEvent_id ; return el});
-        if (this.displayEvent(dayDate, time).user_id===0) {
+       let  currentEvent_id= this.displayEventC(dayDate, time).id;
+        if ( this.displayEventC(dayDate, time).user_id ===0) {
         axios.post('http://localhost:8000/api/event/client/select',{
         id : currentEvent_id,
         token:  this.$store.state.token
        }).then(response=>{
-        // this.addClass($event,'event_selected');
-        currentEvent.user_id = response.data.user_id;
+        this.getEvents();
        }).catch(error=>{
          if (error.message == 'Request failed with status code 401') {
            this.$router.push({ name: 'login'});
@@ -240,8 +243,7 @@ import axios from 'axios';
         id : currentEvent_id,
         token:  this.$store.state.token
        }).then(response=>{
-         //this.removeClass($event,'event_selected');
-         currentEvent.user_id = 0;
+        this.getEvents();
        }).catch(error=>{
          console.log(error.message)
         });
@@ -251,13 +253,14 @@ import axios from 'axios';
 
             //display Events
       displayEventA(dayDate, time) {
-          //console.log(this.formatDate(dayDate));
-        return this.events.find(el=>{
+      let ev = this.events.find(el=>{
           if( el.event_date === this.formatDate(dayDate) && el.start_time === time ){
-            console.log(el)
           return el
           }
           });
+        if(typeof ev !== 'undefined'){
+          return ev
+        }
       },
       //create free event
     createEvent(dayDate, time, $event){
@@ -267,31 +270,30 @@ import axios from 'axios';
         time: time,
         token:  this.$store.state.token
         }).then(response=>{
-          console.dir(response.data);
-         
-          this.events.push(response.data);
-          console.log(this.events);
-          return this.displayEventA(dayDate, time)
+          this.getEvents();
+         // this.displayEventA(dayDate, time);
+        }).catch(error=>{
+        console.log(error.message);
+        });
+    },
+    deleteEvent(dayDate, time){
+      let ev_id = this.displayEventA(dayDate, time).id
+      axios.post('http://localhost:8000/api/event/delete',  {
+        id : ev_id,
+        token:  this.$store.state.token
+        }).then(response=>{
+        this.getEvents();
         }).catch(error=>{
         console.log(error.message);
         });
     },
     },
-  
     /////////////////////////////////////////////  calendar build  ////////////////////////////////////
-
     created() {
     //build the times slots
     this.generateTimes(30,8,17);
     this.getToday();
-    this.axios.get('http://localhost:8000/api/event/index',  {
-        }).then(response=>{
-         console.dir(response.data);
-          this.events = response.data
-          //console.log(this.events);
-        }).catch(error=>{
-        console.log(error.message);
-        });
+    this.getEvents();
     },
     };
     </script>
@@ -310,13 +312,7 @@ import axios from 'axios';
   margin: 20px auto;
   max-width: 1280px;
   min-width: 500px;
-  height:900px;
-  overflow-y: hidden;
   box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.2) ,0px 3px 7px rgba(0, 0, 0, 0.1);
-  >div{
-    height:900px;
-    position:absolute;
-  }
 }
 
 .wrap {

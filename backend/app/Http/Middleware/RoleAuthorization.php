@@ -29,8 +29,20 @@ class RoleAuthorization
                 //Try authenticating user
                 $user = $token->authenticate();
             } catch (TokenExpiredException $e) {
+                 // If the token is expired, then it will be refreshed and added to the headers
+                try
+                {
+                    $refreshed = JWTAuth::refresh(JWTAuth::getToken());
+                    $user = JWTAuth::setToken($refreshed)->toUser();
+                    header('Authorization: Bearer ' . $refreshed);
+                }
+                catch (JWTException $e)
+                {
                 //Thrown if token has expired
                 return $this->unauthorized('Your token has expired. Please, login again.');
+                }
+                $user = JWTAuth::setToken($refreshed)->toUser();
+                
             } catch (TokenInvalidException $e) {
                 //Thrown if token invalid
                 return $this->unauthorized('Your token is invalid. Please, login again.');

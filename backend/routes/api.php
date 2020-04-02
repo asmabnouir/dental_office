@@ -37,7 +37,7 @@ Route::group([
     Route::get('index', 'EventsController@index');
     Route::post('client/select','clientController@select');
     Route::post('client/unselect', 'clientController@unselect');
-   // Route::post('delete', 'AdminController@delete');
+    Route::post('delete', 'AdminController@delete');
 });
 
 
