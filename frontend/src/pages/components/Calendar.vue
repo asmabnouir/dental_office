@@ -30,14 +30,39 @@
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
        <div v-if="displayEventA(dayDate, time)" 
         v-bind:class="['event' ,  ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
-        @click=" ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? deleteEvent(dayDate, time):  openMenu()"  >
+        @click.prevent=" ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? deleteEvent(dayDate, time):  modals.mini = true"  >
         userId {{(typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id: ''  }}
-          <ClickMenu></ClickMenu>
         </div>
         <div v-else class="empty" @click="createEvent(dayDate, time,$event)">
         </div>
       </td>
     </tr>
+              <!-- small modal -->
+            <modal
+              :show.sync="modals.mini"
+              class="modal-primary"
+              :show-close="false"
+              headerClasses="justify-content-center"
+              type="mini"
+            >
+               <n-button type="default" size="lg" style=" width:100%;" >
+                 Delete
+               </n-button>
+               <br>
+               <n-button type="default" size="lg" style=" width:100%;" @click="modals.input=true">
+                 Add User
+               </n-button>
+               <fg-input 
+                v-bind:style="displayInput"
+                placeholder="Rechercher le user"
+                addon-right-icon="now-ui-icons ui-1_zoom-bold"
+                ></fg-input>
+              <template slot="footer">
+                <n-button type="neutral" link @click.prevent="modals.mini = false"
+                  >Close</n-button
+                >
+              </template>
+            </modal>
     </tbody>
     <tbody v-else>
       <tr v-for="(time, index) in times" :key="index">
@@ -45,7 +70,7 @@
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
        <div v-show="displayEventC(dayDate, time)"
         v-bind:class="['event' ,  ((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
-        @click="toggleSelect(dayDate, time,$event)" >
+        @click.prevent="toggleSelect(dayDate, time,$event)" >
           eventId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).id : ''  }}
           <br>userId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : ''  }}
           <br>{{formatDate(dayDate)}}
@@ -62,10 +87,14 @@
 </template>
 <script>
 import axios from 'axios';
+import { Button, Modal,FormGroupInput, } from '@/components';
     export default {
         //
       name: 'calendar',
       components: {
+      Modal,
+    [Button.name]: Button,
+    [FormGroupInput.name]: FormGroupInput,
       },
       data() {
         return {
@@ -81,9 +110,16 @@ import axios from 'axios';
         startWeek:0,
         events:[],
         selected:false,
+        modals: {
+        mini: false,
+        input:false,
+      },
       }
       },
       computed: {
+        displayInput(){
+         return  this.modals.input==true ? 'display : block' : 'display :none';
+        }
       },
     methods: {
       ///////////////////////////////////////////// calendar display ////////////////////////////////////
@@ -205,7 +241,6 @@ import axios from 'axios';
           }
           });
           if(typeof user_ev  !== 'undefined'){
-          console.log(user_ev)
           return user_ev
         }
       }
@@ -299,6 +334,8 @@ import axios from 'axios';
     </script>
 
 <style lang="scss" scoped>
+
+
 * {
   margin: 0;
   border: 0;

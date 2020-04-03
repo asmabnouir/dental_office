@@ -99,6 +99,6 @@ export default {
 </script>
 <style>
 .modal.show {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(43, 42, 42, 0.082);
 }
 </style>
