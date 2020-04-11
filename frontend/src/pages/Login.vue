@@ -107,8 +107,13 @@ export default {
           console.log(response.data);
           this.$store.state.token =response.data.access_token;
           this.$store.state.userId = response.data.user.id;
+          this.$store.state.role = response.data.user.role;
           this.$store.commit("loginSuccess", response);
-         this.$router.push({ name: 'profile'});
+          if(this.$store.getters.role === 'admin'){
+              this.$router.push({ name: 'index'})
+          }else{
+              this.$router.push({ name: 'profile'});
+          }
         }).catch(error=>{
         console.log(error.message);
         })

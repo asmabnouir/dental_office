@@ -41,4 +41,23 @@ class AdminController extends Controller
         $event->delete();
     }
 
+    public function eventAddUser(Request $request)
+    {
+        $user_id= $request->userId;
+        $event= $request->id;
+        $event=Event::find($event);
+        $event->user_id = $user_id;
+        $event->save();
+
+    }
+
+    
+    //api/user
+    public function usersIndex(Request $request)
+    {
+        $users = User::all();
+        return $users;
+
+    }
+
 }

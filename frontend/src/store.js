@@ -8,7 +8,7 @@ export default({
         isLoggedIn: !!user,
         token:user,
         userId :0,
-        name:"",
+        role:"",
     },
     getters:{
         isLoggedIn(state) {
@@ -20,8 +20,8 @@ export default({
         userId(state) {
             return state.userId;
         },
-        name(state) {
-            return state.name;
+        role(state) {
+            return state.role;
         },
     },
     mutations:{

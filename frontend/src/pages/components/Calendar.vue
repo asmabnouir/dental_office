@@ -24,11 +24,11 @@
 
     <div class="wrap">
   <table>
-    <tbody v-if="$store.getters.name === 'admin'">
+    <tbody v-if="$store.getters.role === 'admin'">
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
-       <div v-if="displayEventA(dayDate, time)" 
+       <div v-if="displayEventA(dayDate, time)"
         v-bind:class="['event' ,  ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
         @click.prevent=" ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? deleteEvent(dayDate, time):  modals.mini = true"  >
         userId {{(typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id: ''  }}

@@ -38,7 +38,14 @@ Route::group([
     Route::post('client/select','clientController@select');
     Route::post('client/unselect', 'clientController@unselect');
     Route::post('delete', 'AdminController@delete');
+    Route::post('addUser', 'AdminController@eventAddUser');
 });
 
 
 
+Route::group([
+    'prefix' => 'users'
+
+], function () {
+    Route::get('list', 'AdminController@usersIndex');
+});
