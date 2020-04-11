@@ -54,7 +54,6 @@
 import { Button, FormGroupInput } from '@/components';
 export default {
   name: 'contact',
-  bodyClass: 'landing-page',
   components: {
     [Button.name]: Button,
     [FormGroupInput.name]: FormGroupInput
