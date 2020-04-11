@@ -12,7 +12,8 @@ class ClientController extends Controller
     {
         $this->middleware('auth.role:client');
     }
-    //Fonctions Client
+    
+     //api/event
 
     public function select(Request $request){
         $event=Event::find($request->id);
@@ -32,6 +33,15 @@ class ClientController extends Controller
         $event->save();
         return $event;
         }
+    }
+
+     //api/users
+     public function submitForm(Request $request){
+        $user = auth()->user($request->token);
+        $user->age= $request->age;
+        $user->text= $request->text;
+        $user->save();
+       return $user;
     }
 
 }

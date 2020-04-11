@@ -28,9 +28,12 @@
       <tr v-for="(time, index) in times" :key="index">
       <td class="headcol">{{time}}</td>
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
-       <div v-if="displayEventA(dayDate, time)"
+       <div v-if="displayEventA(dayDate, time)" 
         v-bind:class="['event' ,  ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
-        @click.prevent=" ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? deleteEvent(dayDate, time):  modals.mini = true"  >
+        @click.prevent="
+        ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0
+        ? deleteEvent(displayEventA(dayDate,time).id)
+        :  getUsers(), modals.mini = true, modals.eventId= displayEventA(dayDate,time).id" >
         userId {{(typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id: ''  }}
         </div>
         <div v-else class="empty" @click="createEvent(dayDate, time,$event)">
@@ -41,11 +44,11 @@
             <modal
               :show.sync="modals.mini"
               class="modal-primary"
-              :show-close="false"
+              :show-close="true"
               headerClasses="justify-content-center"
               type="mini"
             >
-               <n-button type="default" size="lg" style=" width:100%;" >
+               <n-button type="default" size="lg" style=" width:100%;" @click="deleteEvent(modals.eventId)" >
                  Delete
                </n-button>
                <br>
@@ -53,15 +56,15 @@
                  Add User
                </n-button>
                <fg-input 
-                v-bind:style="displayInput"
+                v-model="search"
+                :style="displayInput"
                 placeholder="Rechercher le user"
                 addon-right-icon="now-ui-icons ui-1_zoom-bold"
                 ></fg-input>
-              <template slot="footer">
-                <n-button type="neutral" link @click.prevent="modals.mini = false"
-                  >Close</n-button
-                >
-              </template>
+               <div :style="displaySearch" >
+                  <div  id="userSearch" v-for="(user,index) in filteredUsers" :key="index" @click="eventAddUser(user)">
+                     {{user.name}}</div>
+              </div>
             </modal>
     </tbody>
     <tbody v-else>
@@ -98,7 +101,8 @@ import { Button, Modal,FormGroupInput, } from '@/components';
       },
       data() {
         return {
-          error:'',
+        search:'',
+        error:'',
         weekdays: ['Lu','Ma','Me','J','Ve','Sa','Di'],
         times:[],
         calendarWeek: {
@@ -110,16 +114,29 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         startWeek:0,
         events:[],
         selected:false,
+        users:[],
         modals: {
         mini: false,
         input:false,
+        eventId:0,
+        search : false,
       },
       }
       },
       computed: {
         displayInput(){
          return  this.modals.input==true ? 'display : block' : 'display :none';
+        },
+        filteredUsers(){
+         return this.users.filter((user)=>{
+            return user.name.match(this.search)
+         })
+        },
+        displaySearch(){
+          return this.search.length>=1 ? 'display:block':'display:none'
+           
         }
+
       },
     methods: {
       ///////////////////////////////////////////// calendar display ////////////////////////////////////
@@ -285,6 +302,35 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         }
       },
           ///////////////////////////////////////////// calendar Events Admin side  ////////////////////////////////////
+           //get Users list 
+          getUsers(){
+        axios.post('http://localhost:8000/api/users/list', {
+          token : this.$store.state.token
+        }).then(response=>{
+          this.users = response.data
+         console.log(this.users);
+        }).catch(error=>{
+        console.log(error.message);
+        });
+          },
+        eventAddUser(user){
+       //add the user.id to event_user_id
+       console.log(user.id);
+       console.log(this.modals.eventId);
+       this.search = user.name
+        axios.post('http://localhost:8000/api/event/addUser',{
+        userId : user.id,
+        id : this.modals.eventId,
+        token:  this.$store.state.token
+       }).then(response=>{
+         this.modals.mini = false;
+        this.getEvents();
+       }).catch(error=>{
+         if (error.message == 'Request failed with status code 401') {
+           this.$router.push({ name: 'login'});
+         }
+        });
+          },
 
             //display Events
       displayEventA(dayDate, time) {
@@ -311,12 +357,12 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         console.log(error.message);
         });
     },
-    deleteEvent(dayDate, time){
-      let ev_id = this.displayEventA(dayDate, time).id
+    deleteEvent(eventId){
       axios.post('http://localhost:8000/api/event/delete',  {
-        id : ev_id,
+        id : eventId,
         token:  this.$store.state.token
         }).then(response=>{
+        if(this.modals.mini){this.modals.mini=false }
         this.getEvents();
         }).catch(error=>{
         console.log(error.message);

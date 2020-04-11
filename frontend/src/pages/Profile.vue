@@ -7,67 +7,117 @@
       >
       </parallax>
       <div class="container ProfileTitle">
-        <h3 class="title">Ryan Scheinder</h3>
+        <h3 class="title">{{form.name}}</h3>
       </div>
     </div>
     <div class="section">
       <div class="container">
+        <div v-show="form.submitted">
+            <alert type="success">
+        <div class="alert-icon">
+              <i class="now-ui-icons ui-2_like"></i>
+            </div>
+            <strong>Vos informations sont bien enregistrées </strong> 
+            </alert>
+          </div>
         <div class="row ">
           <div class="col-lg-5 col-md-12">
             <h3 class="title">Données de compte </h3>
             <div class="">
-              <p>Votre ID :</p>
-                <fg-input placeholder="num ID: 02586547125"></fg-input>
+              <p class="h4">Votre E-Mail: </p> 
+              <p>{{form.email}}</p>
             </div>
             <div class="">
-              <p>Votre Mail:</p>
-              <fg-input placeholder="mail: mail@mail.com"></fg-input>
-            </div>
-            <div class="">
-              <p>Votre Mail:</p>
-                <fg-input placeholder="password: ......"></fg-input>
+              <p class="h4">Votre Mot de passe:</p>
+                <fg-input placeholder=" ......"></fg-input>
             </div>
           </div>
-          <div class="col-lg-5 col-md-12">
+          <form @submit.prevent="submitForm" class="col-lg-5 col-md-12">
+          <div >
             <h3 class="title">Données de patient</h3>
             <div style="margin-bottom:50px">
-              <p>Votre Age :</p>
-                <fg-input placeholder="20"></fg-input>
+              <p class="h4">Votre Age : </p><p>{{form.age}}</p>
+                <fg-input  v-model="form.age" placeholder="20"></fg-input>
             </div>
             <div class="">
               <p>Problème de santé à signaler :</p>
+              <p>{{form.text}}</p>
               <textarea
                 class="form-control"
-                name="name"
                 rows="4"
                 cols="80"
-                v-model="form.message"
-                placeholder="Ecrire voter message ..."
+                v-model="form.text"
+                placeholder="Ajouter des détails ..."
               ></textarea>
             </div>
           </div>
+          <button  type="submit" class=" btn btn-primary">Enregistrer les moidification</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {FormGroupInput} from '@/components';
+import {FormGroupInput,Alert} from '@/components';
+import axios from 'axios';
+import bus from '../bus';
+
 export default {
   name: 'profile',
   bodyClass: 'profile-page',
   components: {
     [FormGroupInput.name]: FormGroupInput,
+       Alert,
   },
   data() {
     return {
       form: {
-        firstName: '',
+        name:"",
         email: '',
-        message: ''
+        age:'',
+        text: '',
+        submitted:false,
       }
     }
   },
+  methods:{
+    getUser(){
+      axios.post('http://localhost:8000/api/auth/me',{token:this.$store.state.token}).then(response =>{
+      //console.log(response.data);
+        this.$store.state.UserId = response.data.id;
+       this.form.name = response.data.name;
+       this.form.email = response.data.email;
+       this.form.text = response.data.text;
+       this.form.age = response.data.age;
+      this.form.submitted=false;
+      console.log( this.form.submitted);
+      }).catch(error=>{
+      console.log(error.message);
+      })
+  },
+    submitForm(){
+      this.form.submitted = false;
+      axios.post('http://localhost:8000/api/users/profile/submit',{
+        token:this.$store.state.token,
+        text : this.form.text,
+        age  : this.form.age,
+      }).then(response =>{
+      console.log(response.data);
+      this.form.submitted = true;
+      console.log( this.form.submitted);
+      this.getUser();
+      console.log( this.form.submitted);
+      }).catch(error=>{
+      console.log(error.message);
+      });
+    }
+  },
+  created(){
+      if (this.$store.getters.isLoggedIn) {
+         this.getUser();
+      }
+    }
 };
 </script>
 <style scoped media="scss">

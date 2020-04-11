@@ -36,17 +36,24 @@
           <p>Contact</p>
         </a>
       </li>
+      <li class="nav-item" v-show="$store.state.isLoggedIn">
+        <router-link :to="{ name: 'profile' }" >
+           <a
+            class="nav-link "
+            target="_blank"
+          ><i class="now-ui-icons users_circle-08"></i>
+          </a>
+        </router-link>
+      </li>
         <li class="nav-item">
             <a
             class="nav-link "
             target="_blank"
           >
-            <router-link :to="{ name: 'login' }"  v-if="!this.$store.state.isLoggedIn" >
-            <i class="now-ui-icons users_circle-08"></i>
+            <router-link :to="{ name: 'login' }"  v-if="!$store.state.isLoggedIn" >
             <a> login</a>
            </router-link>
             <div v-else >
-              <i class="now-ui-icons users_circle-08"></i>
             <a @click.prevent="logout()" > logout </a>
             </div>
           </a>

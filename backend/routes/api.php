@@ -47,5 +47,6 @@ Route::group([
     'prefix' => 'users'
 
 ], function () {
-    Route::get('list', 'AdminController@usersIndex');
+    Route::post('list', 'AdminController@usersIndex');
+    Route::post('profile/submit', 'ClientController@submitForm');
 });
