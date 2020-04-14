@@ -36,6 +36,7 @@
             >
             </fg-input>
             <fg-input
+            v-model="user.password_confirmation"
               class="no-border input-lg"
               addon-left-icon="now-ui-icons text_caps-small"
               placeholder="Confirmation mot de passe ..."
@@ -85,6 +86,7 @@ export default {
             name:"",
             email:"",
             password:"",
+            password_confirmation:"",
         },
           error: false,
           errors: {},
@@ -96,7 +98,8 @@ export default {
            axios.post('http://localhost:8000/api/auth/register',{
              name:this.user.name,
             email:this.user.email,
-            password:this.user.password
+            password:this.user.password,
+            password_confirmation: this.user.password_confirmation,
         }).then(response =>{
           this.$router.push({ name: 'login'});
         }).catch(error=>{

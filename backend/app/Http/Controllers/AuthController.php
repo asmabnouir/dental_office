@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use Validator;
 class AuthController extends Controller
 {
     /**
@@ -23,14 +24,34 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register()
-    {
+    public function register(Request $request)
+    /*{
 
         User::create([
             'name' => request('name'),
             'email' => request('email'),
             'password' => \Hash::make(request('password')),
         ]);
+    }*/
+    {
+        $v = Validator::make($request->all(), [
+            'name' => 'required|min:3',
+            'email' => 'required|email|unique:users',
+            'password'  => 'required|min:3|confirmed',
+        ]);
+        if ($v->fails())
+        {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $v->errors()
+            ], 422);
+        }
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = \Hash::make($request->password);
+        $user->save();
+        return response()->json(['status' => 'success'], 200);
     }
 
 
