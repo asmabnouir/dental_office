@@ -25,14 +25,6 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request)
-    /*{
-
-        User::create([
-            'name' => request('name'),
-            'email' => request('email'),
-            'password' => \Hash::make(request('password')),
-        ]);
-    }*/
     {
         $v = Validator::make($request->all(), [
             'name' => 'required|min:3',
@@ -60,20 +52,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(Request $request)
     {
-
-        $credentials = [
-            'email' => request('email'),
-            'password' => request('password'),
-        ];
-        $token = auth()->attempt($credentials);
-        //$remember = \request()->has('remember');
-        if (!$token) {
-            var_dump($credentials) ;
-            return  response()->json(['error' => 'Unauthorized'], 401);
-        }
-        return $this->respondWithToken($token);
+            $credentials = $request->only('email', 'password');
+            if ($token = $this->guard()->attempt($credentials)) {
+                return $this->respondWithToken($token);
+            }
+            return response()->json(['error' => 'login_error'], 401);
     }
 
     /**
@@ -91,13 +76,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout(request $request)
+    public function logout()
     {
-        $token = $request->token;
-        auth()->invalidate($token);
-        auth()->invalidate(true);
-        auth()->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        $this->guard()->logout();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Logged out Successfully.'
+        ], 200);
     }
 
     /**
@@ -107,7 +92,12 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        if ($token = $this->guard()->refresh()) {
+            return response()
+                ->json(['status' => 'successs'], 200)
+                ->header('Authorization', $token);
+        }
+        return response()->json(['error' => 'refresh_token_error'], 401);
     }
 
     /**
@@ -122,6 +112,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
+            'expires_in' => $this->guard()->factory()->getTTL() * 60,
             'user' => auth()->user()
         ]);
     }
