@@ -164,6 +164,9 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         formatDate(date){
           return new Intl.DateTimeFormat('fr').format(date)
         },
+        formatToPhp(date){
+         return date.toString().split("/").reverse().join("-");
+        },
        //get the week number
       CurrentWeek(){
       var date = new Date();
@@ -204,6 +207,7 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         //86400000 (1000*60*60*24) - number of milliseconds in one day:
         { var date = new Date( dStart.valueOf() +i*86400000);
          this.calendarWeek.weekDates.push(date);
+         console.log(date)
         return date;
         });
         },
@@ -233,7 +237,7 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         axios.get('http://localhost:8000/api/event/index',  {
         }).then(response=>{
           this.events = response.data
-          //console.log(this.events);
+          console.log(this.events);
         }).catch(error=>{
         console.log(error.message);
         });
@@ -345,12 +349,13 @@ import { Button, Modal,FormGroupInput, } from '@/components';
       },
       //create free event
     createEvent(dayDate, time, $event){
-      console.dir(dayDate);
+      console.dir("this is from js : "+ this.formatToPhp(dayDate));
       axios.post('http://localhost:8000/api/event/create',  {
-        date: this.formatDate(dayDate) ,
+        date: this.formatToPhp(this.formatDate(dayDate)),
         time: time,
         token:  this.$store.state.token
         }).then(response=>{
+          console.dir(response.data);
           this.getEvents();
          // this.displayEventA(dayDate, time);
         }).catch(error=>{

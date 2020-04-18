@@ -16,7 +16,7 @@ class EventsController extends Controller
         $id= $event->id;
         $date=$event->event_date;
         $time=$event->start_time;
-        $event->event_date=date('m/d/Y', strtotime($date)); //when i do 'm/d/Y' it's returning d/m/Y !!!!
+        $event->event_date=date('d/m/Y', strtotime($date)); 
         $event->start_time=date('h:i', strtotime($time));
         //$event->end_time = strval($event->start_time + 1);
         endforeach;
