@@ -21,6 +21,7 @@
     style="background-image:url('img/GSD_2.jpg');
             background-attachment: fixed;"
   ></div>
+    <input type="time">
     <contact id="contact"></contact>
 
   </div>
