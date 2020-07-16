@@ -58,6 +58,11 @@ class AuthController extends Controller
             if ($token = $this->guard()->attempt($credentials)) {
                 return $this->respondWithToken($token);
             }
+            /*setcookie("access_token", "this is a test", time()+3600);
+            setcookie($name = 'access_token', $value = 'this is a test', $expire = time()+3600,
+                        $secure = false, $httponly = false);
+
+            //setcookie("access_token", $token, time()+2*24*60*60);*/
             return response()->json(['error' => 'login_error'], 401);
     }
 
@@ -68,7 +73,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json($this->guard()->user());
     }
 
     /**
@@ -92,12 +97,14 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        if ($token = $this->guard()->refresh()) {
+        /*if ($token = $this->guard()->refresh()) {
             return response()
                 ->json(['status' => 'successs'], 200)
                 ->header('Authorization', $token);
-        }
-        return response()->json(['error' => 'refresh_token_error'], 401);
+        }*/
+        $newToken =  $this->guard()->refresh();
+        /*return response()->json(['error' => 'refresh_token_error'], 401);*/
+        return response()->json(['token' => $newToken ]);
     }
 
     /**

@@ -5,8 +5,8 @@ const user = getLocalUser();
 export default({
 
     state: {
+        token: user,
         isLoggedIn: !!user,
-        token:user,
         userId :0,
         role:"",
     },
@@ -25,9 +25,18 @@ export default({
         },
     },
     mutations:{
+           /* getLocalUser() {
+                const userStr = document.cookie
+            
+                if(!userStr) {
+                    return null;
+                }
+            
+                return userStr;
+            },*/
             loginSuccess(state, payload) {
                 state.isLoggedIn = true;
-                document.cookie = state.token;+"expires= Thu, 21 Aug 2014 20:00:00 UTC"
+                //document.cookie = state.token;+"expires= Thu, 21 Aug 2014 20:00:00 UTC"
                 //localStorage.setItem("user", state.currentUser);
             },
             logout(state) {
@@ -36,7 +45,7 @@ export default({
                 state.isLoggedIn = false;
                 state.name = "";
                 state.userId
-                state.token = null;
+               // state.token = null;
             },
 
     },

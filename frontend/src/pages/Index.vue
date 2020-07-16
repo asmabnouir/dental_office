@@ -50,7 +50,7 @@ export default {
       this.$store.state.userId = response.data.id;
        this.$store.state.role = response.data.role
       }).catch(error=>{
-      console.log(error.message);
+      console.log(error.message );
       })
   },
   },
