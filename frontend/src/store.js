@@ -25,18 +25,9 @@ export default({
         },
     },
     mutations:{
-           /* getLocalUser() {
-                const userStr = document.cookie
-            
-                if(!userStr) {
-                    return null;
-                }
-            
-                return userStr;
-            },*/
             loginSuccess(state, payload) {
                 state.isLoggedIn = true;
-                //document.cookie = state.token;+"expires= Thu, 21 Aug 2014 20:00:00 UTC"
+               document.cookie = state.token;
                 //localStorage.setItem("user", state.currentUser);
             },
             logout(state) {
