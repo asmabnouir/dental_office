@@ -32,7 +32,6 @@ import Calendar from './components/Calendar';
 import Contact from './components/Contact';
 import axios from 'axios';
 
-
 export default {
   name: 'index',
   bodyClass: 'index-page',
@@ -56,7 +55,10 @@ export default {
   created(){
       if (this.$store.getters.isLoggedIn) {
          this.getUser();
-         console.log("this is the headers: "+ axios.defaults.headers.Authorization);
+         document.cookie= "token=" + axios.defaults.headers.Authorization;
+         console.log("this is the headers: "+ document.cookie);
+      }else {
+         document.cookie = " ; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       }
     }
 };

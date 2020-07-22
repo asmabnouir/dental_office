@@ -1,4 +1,4 @@
-import { getLocalUser } from "./helpers";
+import { getLocalUser, setCookie } from "./helpers";
 import axios from 'axios';
 
 const user = getLocalUser();
@@ -28,18 +28,19 @@ export default({
     mutations:{
             loginSuccess(state, payload) {
                 state.isLoggedIn = true;
-                document.cookie = "username="+ state.token ;
-                //axios.defaults.headers.Authorization = 'Bearer ' + state.token;
+                document.cookie = "token= Bearer "+ state.token ;
+                //setCookie(token, state.token , 30)
+                axios.defaults.headers.Authorization = 'Bearer ' + state.token;
                 //localStorage.setItem("user", state.currentUser);
             },
             logout(state) {
                 //localStorage.removeItem("user");
-               // axios.defaults.headers.Authorization = 'Bearer ' ;
+                axios.defaults.headers.Authorization = "";
                //delete axios.defaults.headers.common['Authorization'];
                 state.isLoggedIn = false;
                 state.name = "";
                 state.userId = 0 ;
-                document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "token=  ; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                // state.token = null;
             },
 
