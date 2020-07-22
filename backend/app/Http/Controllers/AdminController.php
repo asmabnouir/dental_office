@@ -22,7 +22,7 @@ class AdminController extends Controller
     public function create(Request $request)
     {
         $event = new Event;
-      $date=$request->date;
+        $date=$request->date;
        //$date= "17-04-2020";
         var_dump($date);
         $time=$request->time;

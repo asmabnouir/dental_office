@@ -1,4 +1,5 @@
 import { getLocalUser } from "./helpers";
+import axios from 'axios';
 
 const user = getLocalUser();
 
@@ -27,15 +28,18 @@ export default({
     mutations:{
             loginSuccess(state, payload) {
                 state.isLoggedIn = true;
-               document.cookie = state.token;
+                document.cookie = "username="+ state.token ;
+                //axios.defaults.headers.Authorization = 'Bearer ' + state.token;
                 //localStorage.setItem("user", state.currentUser);
             },
             logout(state) {
                 //localStorage.removeItem("user");
-                document.cookie = "; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+               // axios.defaults.headers.Authorization = 'Bearer ' ;
+               //delete axios.defaults.headers.common['Authorization'];
                 state.isLoggedIn = false;
                 state.name = "";
-                state.userId
+                state.userId = 0 ;
+                document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                // state.token = null;
             },
 

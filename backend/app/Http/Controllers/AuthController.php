@@ -60,9 +60,9 @@ class AuthController extends Controller
             }
             /*setcookie("access_token", "this is a test", time()+3600);
             setcookie($name = 'access_token', $value = 'this is a test', $expire = time()+3600,
-                        $secure = false, $httponly = false);
+                        $secure = false, $httponly = false);*/
 
-            //setcookie("access_token", $token, time()+2*24*60*60);*/
+            //setcookie("access_token", $token, time()+2*24*60*60);
             return response()->json(['error' => 'login_error'], 401);
     }
 

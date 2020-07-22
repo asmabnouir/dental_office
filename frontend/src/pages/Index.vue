@@ -21,7 +21,6 @@
     style="background-image:url('img/GSD_2.jpg');
             background-attachment: fixed;"
   ></div>
-    <input type="time">
     <contact id="contact"></contact>
 
   </div>
@@ -47,7 +46,7 @@ export default {
   getUser(){
       axios.post('http://localhost:8000/api/auth/me',{token:this.$store.state.token}).then(response =>{
       //console.log(response.data);
-      this.$store.state.userId = response.data.id;
+       this.$store.state.userId = response.data.id;
        this.$store.state.role = response.data.role
       }).catch(error=>{
       console.log(error.message );
@@ -57,6 +56,7 @@ export default {
   created(){
       if (this.$store.getters.isLoggedIn) {
          this.getUser();
+         console.log("this is the headers: "+ axios.defaults.headers.Authorization);
       }
     }
 };

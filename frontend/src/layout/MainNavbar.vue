@@ -6,7 +6,7 @@
     :color-on-scroll="colorOnScroll"
     menu-classes="ml-auto"
   >
-    <template slot-scope="{ toggle, isToggled }">
+    <template >
       <router-link v-popover:popover1 class="navbar-brand" to="/">
       Grand Street Dental
       </router-link>
@@ -93,8 +93,10 @@ export default {
          logout(){
           axios.post('http://localhost:8000/api/auth/logout',{token:this.$store.state.token}).then(response =>{
             console.log(response.data.message);
+            
             this.logoutMsg = response.data.message;
             this.$store.commit('logout');
+            console.log("this is the test " + this.$store.userId)
             this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
           }),
           console.log( this.$store.state.isLoggedIn + "  // logout function");
