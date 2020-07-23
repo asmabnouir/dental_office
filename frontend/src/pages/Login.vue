@@ -75,6 +75,7 @@ import { Card, Button, FormGroupInput, Alert} from '@/components';
 import MainFooter from '@/layout/MainFooter';
 import axios from 'axios';
 import { Bus } from '../main';
+import { getLocalUser, setCookie,  getCookie } from "../helpers";
 
 export default {
   name: 'login-page',
@@ -105,6 +106,8 @@ export default {
             password:this.user.password
         }).then(response =>{
           console.log(response.data);
+          //document.cookie = response.data.access_token; //"token= Bearer "+ 
+          setCookie('token', response.data.access_token , 30)
           this.$store.state.token = response.data.access_token;
           this.$store.state.userId = response.data.user.id;
           this.$store.state.role = response.data.user.role;
@@ -118,6 +121,7 @@ export default {
         console.log(error.message);
         });
         console.log("login function");
+        
         }
       },
 

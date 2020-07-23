@@ -43,7 +43,7 @@ export default {
   },
   methods:{
   getUser(){
-      axios.post('http://localhost:8000/api/auth/me',{token:this.$store.state.token}).then(response =>{
+      axios.post('http://localhost:8000/api/auth/me',{token:this.$store.getters.token}).then(response =>{
       //console.log(response.data);
        this.$store.state.userId = response.data.id;
        this.$store.state.role = response.data.role
@@ -53,12 +53,12 @@ export default {
   },
   },
   created(){
+      console.log("token before log in : "+ this.$store.getters.token);
       if (this.$store.getters.isLoggedIn) {
+        console.log("token after log in : "+ this.$store.getters.token);
          this.getUser();
-         document.cookie= "token=" + axios.defaults.headers.Authorization;
-         console.log("this is the headers: "+ document.cookie);
-      }else {
-         document.cookie = " ; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+         //document.cookie= "token=" + axios.defaults.headers.Authorization;
+         //console.log("this is the headers: "+ document.cookie);
       }
     }
 };

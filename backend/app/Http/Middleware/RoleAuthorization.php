@@ -35,7 +35,6 @@ class RoleAuthorization
                     $refreshed = JWTAuth::refresh(JWTAuth::getToken());
                     $user = JWTAuth::setToken($refreshed)->toUser();
                     header('Authorization: Bearer ' . $refreshed);
-                    
                 }
                 catch (JWTException $e)
                 {

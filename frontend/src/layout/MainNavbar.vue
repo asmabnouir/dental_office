@@ -96,7 +96,6 @@ export default {
             
             this.logoutMsg = response.data.message;
             this.$store.commit('logout');
-            console.log("this is the test " + this.$store.userId)
             this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
           }),
           console.log( this.$store.state.isLoggedIn + "  // logout function");
