@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
+
 use App\User;
 use Validator;
 class AuthController extends Controller
@@ -57,8 +57,6 @@ class AuthController extends Controller
     {
             $credentials = $request->only('email', 'password');
             if ($token = $this->guard()->attempt($credentials)) {
-                
-                 //Cookie::queue('tokenName', $token);
                 return $this->respondWithToken($token);
             }
             /*setcookie("access_token", "this is a test", time()+3600);
