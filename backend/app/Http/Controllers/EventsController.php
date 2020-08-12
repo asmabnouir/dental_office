@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Event;
+use App\Http\Controllers\gCalendarController;
 class EventsController extends Controller
 {
 

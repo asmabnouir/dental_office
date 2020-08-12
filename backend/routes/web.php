@@ -15,6 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('cal', 'gCalendarController@index');
-Route::get('free', 'gCalendarController@getFreeEvents');
 

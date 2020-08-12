@@ -50,3 +50,13 @@ Route::group([
     Route::post('list', 'AdminController@usersIndex');
     Route::post('profile/submit', 'ClientController@submitForm');
 });
+
+
+Route::group([
+    'prefix' => 'google'
+
+], function () {
+    Route::get('cal', 'gCalendarController@FindEventByDatetTime');
+    Route::get('free', 'gCalendarController@getFreeEvents');
+});
+

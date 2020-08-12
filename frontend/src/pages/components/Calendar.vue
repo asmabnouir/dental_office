@@ -337,16 +337,17 @@ import { Button, Modal,FormGroupInput, } from '@/components';
           },
 
             //display Events
-      displayEventA(dayDate, time) {
-      let ev = this.events.find(el=>{
-          if( el.event_date === this.formatDate(dayDate) && el.start_time === time ){
-          return el
-          }
-          });
-        if(typeof ev !== 'undefined'){
-          return ev
-        }
+          displayEventA(dayDate, time) {
+          let ev = this.events.find(el=>{
+              if( el.event_date === this.formatDate(dayDate) && el.start_time === time ){
+              return el
+              }
+              });
+            if(typeof ev !== 'undefined'){
+              return ev
+            }
       },
+      
       //create free event
     createEvent(dayDate, time, $event){
       console.dir("this is from js : "+ this.formatToPhp(dayDate));

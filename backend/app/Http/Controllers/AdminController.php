@@ -23,7 +23,6 @@ class AdminController extends Controller
     {
         $event = new Event;
         $date=$request->date;
-       //$date= "17-04-2020";
         var_dump($date);
         $time=$request->time;
         $date=date('Y-m-d', strtotime($date));

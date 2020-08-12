@@ -26,9 +26,35 @@ class gCalendarController extends Controller
     $freeEvents=array();
     foreach ($events as $event){
         if($event->transparency == "transparent"){
-            $freeEvents[] = $event ; 
+            $freeEvents[] = $event->start->dateTime; 
         };
        }
        return response()->json($freeEvents);
+  }
+
+  public function createEvent(){
+    $event = new Event;
+    $event->name = 'RdvFree';
+    $event->startDateTime = Carbon\Carbon::now();
+    $event->endDateTime = Carbon\Carbon::now()->addMinute(30);
+    $event->transparency = 'transparent';
+    $event->save();
+  }
+
+  public function FindEventByDatetTime( $dateTime){
+    $events = Event::get();
+    $e=null;
+    foreach ($events as $event){
+        if( $event->start->dateTime == $dateTime){
+            $e = $event->id;
+        };
+       }
+       return response()->json($e);
+  }
+
+  public function delete($eventId){
+    $event = Event::find($eventId);
+
+    $event->delete();
   }
 }
