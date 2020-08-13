@@ -32,13 +32,13 @@ class gCalendarController extends Controller
        return response()->json($freeEvents);
   }
 
-  public function createEvent(){
+  public function createGEvent($DateTime){
     $event = new Event;
     $event->name = 'RdvFree';
-    $event->startDateTime = Carbon\Carbon::now();
-    $event->endDateTime = Carbon\Carbon::now()->addMinute(30);
+    $event->startDateTime = $DateTime;
+    $event->endDateTime = Carbon::now()->addMinute(30);
     $event->transparency = 'transparent';
-    $event->save();
+    //$event->save();
   }
 
   public function FindEventByDatetTime( $dateTime){
