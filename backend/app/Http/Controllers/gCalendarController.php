@@ -38,10 +38,10 @@ class gCalendarController extends Controller
     $event->startDateTime = $DateTime;
     $event->endDateTime = Carbon::now()->addMinute(30);
     $event->transparency = 'transparent';
-    //$event->save();
+    $event->save();
   }
 
-  public function FindEventByDatetTime( $dateTime){
+  public function Find_g_EventByDatetTime($dateTime){
     $events = Event::get();
     $e=null;
     foreach ($events as $event){
@@ -52,9 +52,8 @@ class gCalendarController extends Controller
        return response()->json($e);
   }
 
-  public function delete($eventId){
+  public function gEventDelete($eventId){
     $event = Event::find($eventId);
-
     $event->delete();
   }
 }
