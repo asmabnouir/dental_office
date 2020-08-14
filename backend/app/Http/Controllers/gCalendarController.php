@@ -35,8 +35,12 @@ class gCalendarController extends Controller
   public function createGEvent($DateTime){
     $event = new Event;
     $event->name = 'RdvFree';
-    $event->startDateTime = $DateTime;
-    $event->endDateTime = Carbon::now()->addMinute(30);
+    //$event->startDateTime = Carbon::create($DateTime);
+    
+    $event->startDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $DateTime, 'Europe/Paris');
+    $event->endDateTime=  Carbon::createFromFormat('Y-m-d H:i:s', $DateTime, 'Europe/Paris')->addMinute(30);
+   /* $event->startDateTime = $DateTime;
+    $event->endDateTime = Carbon::now()->addMinute(30);*/
     $event->transparency = 'transparent';
     $event->save();
   }

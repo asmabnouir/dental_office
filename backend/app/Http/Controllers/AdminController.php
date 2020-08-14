@@ -24,16 +24,15 @@ class AdminController extends Controller
     {
         $event = new Event;
         $date=$request->date;
-        var_dump($date);
         $time=$request->time;
         $date=date('Y-m-d', strtotime($date));
         $time=date('h:i:s', strtotime($time));
-        var_dump($date);
         $event->event_date = $date;
         $event->start_time = $time;
         $event->user_id=0;
-        $event->save();
-        $dateTime = Carbon::parse($date.$time)->locale('fr');
+        //$event->save();
+        $dateTime = $date.' '.$time;
+        //$dateTime = Carbon::parse($date.$time)->locale('fr');
 
         $controller = new gCalendarController;
         $controller->createGEvent($dateTime);
