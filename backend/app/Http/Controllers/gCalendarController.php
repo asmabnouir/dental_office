@@ -67,9 +67,19 @@ class gCalendarController extends Controller
   }
 
   public function gEventDelete($eventId){
-   // $eventId= $this->Find_g_EventByDatetTime($dateTime);
     $event = Event::find($eventId);
     $event->delete();
-    //return response()->json($event);
   }
+
+  public function select_gEevent($dateTime){
+    //call the event by start time
+     $eventId= $this->Find_g_EventByDatetTime($dateTime);
+     $event = Event::find($eventId);
+     //edit the event 
+     $event->transparency = null;
+     $event->summary = "rdv reserve";
+     $event->colorId = 5 ;
+     $event->save();
+   }
+
 }

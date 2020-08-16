@@ -55,13 +55,23 @@ class AdminController extends Controller
     }
 
     public function eventAddUser(Request $request)
-    {
+    {   
+        //select event pour un user de la part de l'admin dans l'app
         $user_id= $request->userId;
         $event= $request->id;
         $event=Event::find($event);
         $event->user_id = $user_id;
         $event->save();
 
+        //rendre l'event occupé dans le google calendar
+        $date=$event->event_date;
+        $time=$event->start_time;
+        $event->event_date=date('d/m/Y', strtotime($date)); 
+        $event->start_time=date('h:i', strtotime($time));
+        $dateTime = $date.' '.$time;
+
+        $controller = new gCalendarController;
+        $controller->select_gEevent($dateTime);
     }
 
     
