@@ -29,7 +29,6 @@ class ClientController extends Controller
             $user_id=$user->id;
             $event->user_id = $user_id;
             $event->save();
-            //return $event;
         //select event in google 
             $controller = new gCalendarController;
             $controller->select_gEevent($dateTime);
@@ -38,9 +37,21 @@ class ClientController extends Controller
     public function unselect(Request $request){
         $user_id = auth()->user($request->token)->id;
         $event=Event::find($request->id);
+        //get the dateTime for google events 
+        $date=$event->event_date;
+        $time=$event->start_time;
+        $date=date('Y-m-d', strtotime($date));
+        $time=date('h:i:s', strtotime($time));
+        $dateTime = $date.' '.$time;
+        //unselect event in the app
         if($event->user_id === $user_id){
         $event->user_id = 0;
         $event->save();
+
+        //select event in google 
+        $controller = new gCalendarController;
+        $controller->unselect_gEevent($dateTime);
+
         return $event;
         }
     }
