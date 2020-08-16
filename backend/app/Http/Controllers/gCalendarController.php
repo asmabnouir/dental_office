@@ -49,15 +49,27 @@ class gCalendarController extends Controller
     $events = Event::get();
     $e=null;
     foreach ($events as $event){
-        if( $event->start->dateTime == $dateTime){
-            $e = $event->id;
+      //convertir le start dateTime en format Y-m-d H:i:s
+      $startTime = $event->start->dateTime;
+      $utc_date = $startTime;
+      $timestamp = strtotime($utc_date);
+      $date =new \DateTime();
+      $date->setTimestamp($timestamp);
+      $date->setTimezone(new \DateTimeZone('Europe/Paris'));
+      $startTime = $date->format('Y-m-d H:i:s');
+      //  trouver l'id de l'event slectionné 
+      if( $startTime == $dateTime){ 
+          $e = $event->id;
         };
        }
-       return response()->json($e);
+       return $e ;
+       
   }
 
   public function gEventDelete($eventId){
+   // $eventId= $this->Find_g_EventByDatetTime($dateTime);
     $event = Event::find($eventId);
     $event->delete();
+    //return response()->json($event);
   }
 }

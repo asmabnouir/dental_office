@@ -56,7 +56,8 @@ Route::group([
     'prefix' => 'google'
 
 ], function () {
-    Route::get('cal', 'gCalendarController@FindEventByDatetTime');
-    Route::get('free', 'gCalendarController@getFreeEvents');
+    Route::get('cal', 'gCalendarController@index');
+    Route::get('free', 'gCalendarControlle@getFreeEvents');
+    //Route::post('delete', 'gCalendarController@gEventDelete');
 });
 

@@ -30,10 +30,8 @@ class AdminController extends Controller
         $event->event_date = $date;
         $event->start_time = $time;
         $event->user_id=0;
-        //$event->save();
+        $event->save();
         $dateTime = $date.' '.$time;
-        //$dateTime = Carbon::parse($date.$time)->locale('fr');
-
         $controller = new gCalendarController;
         $controller->createGEvent($dateTime);
         return response($event);
@@ -46,15 +44,13 @@ class AdminController extends Controller
         $date = $event->event_date ; 
         $time = $event->start_time;
         //convert the dateTime to the format accepted from google Calendar
-        $dateTime = Carbon::parse($date.$time)->locale('fr');
+        $dateTime = $date.' '.$time;
         //call the function from gcalendarControlelr to find the eventid in google Calendar
         $controller = new gCalendarController;
-        $g_eventd = $controller->Find_g_EventByDatetTime($dateTime);
-        //Delete the event in google Calendar 
-        $controller->gEventDelete($dateTime);
-        //delete the event in the app 
+        $eventId = $controller->Find_g_EventByDatetTime($dateTime);
+        $controller->gEventDelete($eventId);
+        //delete the event in the app
         $event->delete();
-
 
     }
 
