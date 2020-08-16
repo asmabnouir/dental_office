@@ -17,12 +17,22 @@ class ClientController extends Controller
 
     public function select(Request $request){
         $event=Event::find($request->id);
+        //get the dateTime for google events 
+            $date=$event->event_date;
+            $time=$event->start_time;
+            $date=date('Y-m-d', strtotime($date));
+            $time=date('h:i:s', strtotime($time));
+            $dateTime = $date.' '.$time;
+        //select event in app 
         if($event->user_id === 0 ){
             $user = auth()->user($request->token);
             $user_id=$user->id;
             $event->user_id = $user_id;
             $event->save();
-            return $event;
+            //return $event;
+        //select event in google 
+            $controller = new gCalendarController;
+            $controller->select_gEevent($dateTime);
         }
     }
     public function unselect(Request $request){

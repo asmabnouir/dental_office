@@ -66,8 +66,8 @@ class AdminController extends Controller
         //rendre l'event occupé dans le google calendar
         $date=$event->event_date;
         $time=$event->start_time;
-        $event->event_date=date('d/m/Y', strtotime($date)); 
-        $event->start_time=date('h:i', strtotime($time));
+        //$date =date('d/m/Y', strtotime($date)); 
+        //$time =date('h:i', strtotime($time));
         $dateTime = $date.' '.$time;
 
         $controller = new gCalendarController;
