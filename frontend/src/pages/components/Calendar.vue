@@ -283,6 +283,8 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         if ( this.displayEventC(dayDate, time).user_id ===0) {
         axios.post('http://localhost:8000/api/event/client/select',{
         id : currentEvent_id,
+        date: this.formatToPhp(this.formatDate(dayDate)),
+        time:  time,
         token:  this.$store.state.token
        }).then(response=>{
         this.getEvents();

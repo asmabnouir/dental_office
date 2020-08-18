@@ -9,17 +9,34 @@ use Google_Client;
 use Google_Service_Calendar;
 class gCalendarController extends Controller
 {
+  public function indexAll(){
+    
+    $events = Event::get();
+    return $events;
+  }
 
   public function index(){
-    //get all events 
+    //get all events
     $events = Event::get();
-    //get all eventsnames
-   /* $eventNameList=array();
-   foreach ($events as $event){
-    $eventNameList[] = $event->summary;
-   }
-   return response()->json($eventNameList);*/
-   return $events;
+    //get all events with start dateTime
+      $eventNameList=array();
+    foreach ($events as $event){
+      $startTime = $event->start->dateTime;
+      $utc_date = $startTime;
+      $timestamp = strtotime($utc_date);
+      $date =new \DateTime();
+      $date->setTimestamp($timestamp);
+      $date->setTimezone(new \DateTimeZone('Europe/Paris'));
+      $Startdate= $date->format('d/m/Y') ;
+      $StartTime= $date->format('h:i') ;
+      if ($event->transparency == 'transparent'){
+        $eventNameList[] =  ["id"=>$event->id, "event_date" => $Startdate, "start_time" => $StartTime, "user_id"=> 0, 'dateTime'=>$Startdate. ' '.$StartTime];
+      }else{
+        $eventNameList[] =  ["id"=>$event->id, "event_date" => $Startdate, "start_time" => $StartTime, "user_id"=> $event->summary, 'dateTime'=>$Startdate. ' '.$StartTime];
+      };
+    }
+    return $eventNameList;
+   //return $events;
   }
   public function getFreeEvents(){
     $events = Event::get();
@@ -65,19 +82,20 @@ class gCalendarController extends Controller
        return $e ;
        
   }
-
+  public function findEventById($eventId){
+    $event = Event::find($eventId);
+    return $event;
+  }
   public function gEventDelete($eventId){
     $event = Event::find($eventId);
     $event->delete();
   }
 
-  public function select_gEevent($dateTime){
-    //call the event by start time
-     $eventId= $this->Find_g_EventByDatetTime($dateTime);
+  public function select_gEevent($eventId, $userId){
      $event = Event::find($eventId);
-     //edit the event 
+     //edit the event
      $event->transparency = null;
-     $event->summary = "Occupe";
+     $event->summary = $userId ;
      $event->colorId = 5 ;
      $event->save();
    }
