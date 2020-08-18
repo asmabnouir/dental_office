@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Event;
+use \Illuminate\Support\Arr;
 use App\Http\Controllers\gCalendarController;
 class EventsController extends Controller
 {
@@ -28,19 +29,36 @@ class EventsController extends Controller
         $gData = $controller->index();
         //convert the data from database to get an array
         $data= json_decode($data, true);
+
         /////////////////////////////work in progress/////////////////////////////
         //trying to find a solution for the delete from google calendar 
-        /*//getDateTimes from  data
-        $check= array();
+
+        //getDateTimes from  data
+        $gDataDate= array();
+         foreach ($gData as $event) {
+            $gDataDate[]=  $event["dateTime"];
+        }
+        
+        //check if all events in db are in google ( vérifier si l y a une suppression d'event dans google )
+        $eventsToDelete= array();
         foreach ($data as $event) {
         $dateTime = $event['event_date'] . ' ' . $event['start_time'] ;
-        $check[]= in_array($dateTime, $gData);
+        $check = in_array($dateTime, $gDataDate);
+        if($check === false){
+            $eventsToDelete[]= $event['id'];
         }
-        //var_dump($check);
-        //check if all events in db are in google ( vérifier si l y a une suppression d'event dans google )*/
+        }
+        //delete the event from db 
+         //find the id of the event to delete in the app 
+         foreach ($eventsToDelete as $id) {
+         $event=Event::find($id);
+         $event->delete();
+         }
+        
+        //var_dump($eventsToDelete);
 
-        //var_dump($gData ,$data );
 
+        
         $finalData = array_merge( $data, $gData);
         return response()->json($finalData); //$final data is a merged array of data from database and google data 
 
