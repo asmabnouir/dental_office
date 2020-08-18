@@ -41,7 +41,7 @@ export default({
                 state.name = "";
                 state.userId = 0 ;
                 document.cookie = "token= ; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-               // state.token = null;
+                state.token = null;
             },
 
     },

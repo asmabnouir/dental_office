@@ -73,7 +73,7 @@
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
        <div v-show="displayEventC(dayDate, time)"
         v-bind:class="['event' ,  ((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
-        @click.prevent="toggleSelect(dayDate, time,$event)" >
+        @click.prevent=" !$store.state.token ? $router.push({ name: 'login'}) : toggleSelect(dayDate, time,$event)" >
           eventId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).id : ''  }}
           <br>userId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : ''  }}
           <br>{{formatDate(dayDate)}}

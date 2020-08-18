@@ -27,7 +27,7 @@ class EventsController extends Controller
         $controller = new gCalendarController;
         $gData = $controller->index();
         //convert the data from database to get an array
-        $data=  json_decode($data, true);
+        $data= json_decode($data, true);
         /////////////////////////////work in progress/////////////////////////////
         //trying to find a solution for the delete from google calendar 
         /*//getDateTimes from  data
@@ -39,6 +39,7 @@ class EventsController extends Controller
         //var_dump($check);
         //check if all events in db are in google ( vérifier si l y a une suppression d'event dans google )*/
 
+        //var_dump($gData ,$data );
 
         $finalData = array_merge( $data, $gData);
         return response()->json($finalData); //$final data is a merged array of data from database and google data 

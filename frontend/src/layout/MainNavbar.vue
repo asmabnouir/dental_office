@@ -96,7 +96,9 @@ export default {
             
             this.logoutMsg = response.data.message;
             this.$store.commit('logout');
+            this.$store.state.role = "";
             this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
+            
           }),
           console.log( this.$store.state.isLoggedIn + "  // logout function");
         }
