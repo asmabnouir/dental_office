@@ -38,7 +38,17 @@ class AdminController extends Controller
     }
 
     public function delete(Request $request)
-    {   //find the id of the event to delete in the app 
+    {   
+        //Use gCalendarController
+        $controller = new gCalendarController;
+        $typeId = gettype($request->id);
+        //case event come from google calendar 
+        if($typeId == "string" ){
+            //no event coming from google is saved in db
+            //delete only on google calendar 
+            $controller->gEventDelete($request->id); 
+        }else{
+        //find the id of the event to delete in the app 
         $event=Event::find($request->id);
         //get the dateTime from the event in the app
         $date = $event->event_date ; 
@@ -46,12 +56,11 @@ class AdminController extends Controller
         //convert the dateTime to the format accepted from google Calendar
         $dateTime = $date.' '.$time;
         //call the function from gcalendarControlelr to find the eventid in google Calendar
-        $controller = new gCalendarController;
         $eventId = $controller->Find_g_EventByDatetTime($dateTime);
         $controller->gEventDelete($eventId);
         //delete the event in the app
         $event->delete();
-
+        }
     }
 
     public function eventAddUser(Request $request)
