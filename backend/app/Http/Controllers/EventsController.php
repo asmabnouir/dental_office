@@ -30,7 +30,6 @@ class EventsController extends Controller
         //convert the data from database to get an array
         $data= json_decode($data, true);
 
-        /////////////////////////////work in progress/////////////////////////////
         //trying to find a solution for the delete from google calendar 
 
         //getDateTimes from  data
