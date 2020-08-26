@@ -64,23 +64,47 @@ class AdminController extends Controller
     }
 
     public function eventAddUser(Request $request)
-    {   
-        //select event pour un user de la part de l'admin dans l'app
-        $user_id= $request->userId;
-        $event= $request->id;
-        $event=Event::find($event);
-        $event->user_id = $user_id;
-        $event->save();
+    {  $user_id= $request->userId;
+        $eventId= $request->id;
+        //Use gCalendarController
+        $controller = new gCalendarController;
+        $typeId = gettype($request->id);
+        //case event come from google calendar 
+        if($typeId == "string" ){
+            $gEvent= $controller->findEventById($eventId);  
+            //format Goggle date time 
+            $startTime = $gEvent->start->dateTime;
+            $utc_date = $startTime;
+            $timestamp = strtotime($utc_date);
+            $date =new \DateTime();
+            $date->setTimestamp($timestamp);
+            $date->setTimezone(new \DateTimeZone('Europe/Paris'));
+            $date= Carbon::parse($gEvent->start->dateTime)->format('Y-m-d') ;
+            $time= Carbon::parse($gEvent->start->dateTime)->format('H:i:s') ;
 
-        //rendre l'event occupé dans le google calendar
+            if($gEvent->transparency == "transparent" ){
+                //select in google calendar
+                $controller->select_gEevent($eventId, $user_id);
+                 // save the slected event in the app database
+                 $event = new Event;
+                 $event->event_date = $date;
+                 $event->start_time = $time;
+                 $event->user_id=$user_id;
+                 $event->save();
+            }
+        }else if($typeId == "integer" ){
+        //select event in app
+        $event=Event::find($eventId);
         $date=$event->event_date;
         $time=$event->start_time;
-        //$date =date('d/m/Y', strtotime($date)); 
-        //$time =date('h:i', strtotime($time));
+        $date=date('Y-m-d', strtotime($date));
+        $time=date('H:i:s', strtotime($time));
         $dateTime = $date.' '.$time;
-
-        $controller = new gCalendarController;
-        $controller->select_gEevent($dateTime);
+        $event->user_id = $user_id;
+        $event->save();
+        $gevent = $controller->Find_g_EventByDatetTime($dateTime);
+        $controller->select_gEevent($gevent, $user_id);
+    }
     }
 
     

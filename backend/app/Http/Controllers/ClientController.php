@@ -21,7 +21,7 @@ class ClientController extends Controller
         //case event come from google calendar 
         if($typeId == "string" ){
             $date=date('Y-m-d', strtotime($request->date));
-            $time=date('h:i:s', strtotime($request->time));
+            $time=date('H:i:s', strtotime($request->time));
              $dateTime = $date.' '.$time;
           //trouver l'event in calendar
             $gEvent= $controller->findEventById($request->id);
@@ -45,7 +45,7 @@ class ClientController extends Controller
             $date=$event->event_date;
             $time=$event->start_time;
             $date=date('Y-m-d', strtotime($date));
-            $time=date('h:i:s', strtotime($time));
+            $time=date('H:i:s', strtotime($time));
             $dateTime = $date.' '.$time;
         //select event in app
        if($event->user_id === 0 ){
@@ -69,7 +69,7 @@ class ClientController extends Controller
         $date=$event->event_date;
         $time=$event->start_time;
         $date=date('Y-m-d', strtotime($date));
-        $time=date('h:i:s', strtotime($time));
+        $time=date('H:i:s', strtotime($time));
         $dateTime = $date.' '.$time;
         //unselect event in the app
         if($event->user_id === $user_id){

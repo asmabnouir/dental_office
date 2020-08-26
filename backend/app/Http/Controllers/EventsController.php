@@ -20,7 +20,7 @@ class EventsController extends Controller
         $date=$event->event_date;
         $time=$event->start_time;
         $event->event_date=date('d/m/Y', strtotime($date)); 
-        $event->start_time=date('h:i', strtotime($time));
+        $event->start_time=date('H:i', strtotime($time));
         //$event->end_time = strval($event->start_time + 1);
         endforeach;
 
