@@ -28,7 +28,7 @@ class gCalendarController extends Controller
       $date->setTimestamp($timestamp);
       $date->setTimezone(new \DateTimeZone('Europe/Paris'));
       $Startdate= $date->format('d/m/Y') ;
-      $StartTime= $date->format('h:i') ;
+      $StartTime= $date->format('H:i') ;
       if ($event->transparency == 'transparent'){
         $eventNameList[] =  ["id"=>$event->id, "event_date" => $Startdate, "start_time" => $StartTime, "user_id"=> 0, 'dateTime'=>$Startdate. ' '.$StartTime];
       }else{

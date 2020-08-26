@@ -26,7 +26,7 @@ class AdminController extends Controller
         $date=$request->date;
         $time=$request->time;
         $date=date('Y-m-d', strtotime($date));
-        $time=date('h:i:s', strtotime($time));
+        $time=date('H:i:s', strtotime($time));
         $event->event_date = $date;
         $event->start_time = $time;
         $event->user_id=0;
