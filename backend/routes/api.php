@@ -35,9 +35,10 @@ Route::group([
 ], function () {
     Route::post('create', 'AdminController@create');
     Route::get('index', 'EventsController@index');
-    Route::post('client/select','clientController@select');
-    Route::post('client/unselect', 'clientController@unselect');
+    Route::post('client/select','ClientController@select');
+    Route::post('client/unselect', 'ClientController@unselect');
     Route::post('delete', 'AdminController@delete');
+    Route::post('addUser', 'AdminController@eventAddUser');
     Route::post('addUser', 'AdminController@eventAddUser');
 });
 
@@ -58,6 +59,7 @@ Route::group([
 ], function () {
     Route::get('cal', 'gCalendarController@indexAll');
     Route::get('free', 'gCalendarControlle@getFreeEvents');
-    //Route::post('delete', 'gCalendarController@gEventDelete');
 });
 
+
+Route::post('contact', 'ContactController@submitForm');

@@ -106,7 +106,6 @@ export default {
             password:this.user.password
         }).then(response =>{
           console.log(response.data);
-          //document.cookie = response.data.access_token; //"token= Bearer "+ 
           setCookie('token', response.data.access_token , 30)
           this.$store.state.token = response.data.access_token;
           this.$store.state.userId = response.data.user.id;

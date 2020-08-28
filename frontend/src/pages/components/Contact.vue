@@ -14,6 +14,7 @@
                   </div>
                 </div>
                 <div class="col-lg-5 text-center ml-auto mr-auto col-md-8">
+                  <form >
                   <fg-input
                     class="input-lg"
                     placeholder="Nom ..."
@@ -39,11 +40,26 @@
                     ></textarea>
                   </div>
                   <div class="send-button">
-                    <n-button type="primary" round block size="lg"
+                    <n-button  @click.prevent="submitForm(), alert = true" type="primary" round block size="lg"
                       >Envoyer Message</n-button
                     >
                   </div>
-        </div>
+                  <div class = 'alert' v-show="alert" >
+                    <alert v-if="success" type="success" dismissible>
+                      <div class="alert-icon">
+                          <i class="now-ui-icons ui-2_like"></i>
+                      </div>
+                        <strong>{{successMsg}}</strong>
+                     </alert>
+                    <alert v-else type="warning" dismissible>
+                      <div class="alert-icon">
+                          <i class="now-ui-icons ui-2_like"></i>
+                      </div>
+                        <strong>{{warningMsg}}</strong>
+                     </alert>
+                    </div>
+                  </form>
+                  </div>
 
       </div>
     </div>
@@ -51,23 +67,53 @@
   </div>
 </template>
 <script>
-import { Button, FormGroupInput } from '@/components';
+import { Button, FormGroupInput, Alert } from '@/components';
+import axios from 'axios';
 export default {
   name: 'contact',
   components: {
     [Button.name]: Button,
-    [FormGroupInput.name]: FormGroupInput
+    [FormGroupInput.name]: FormGroupInput,
+    Alert,
   },
   data() {
     return {
       form: {
         firstName: '',
         email: '',
-        message: ''
-      }
-    };
+        message: '',
+    },
+      alert:false,
+      success:false,
+     successMsg : "",
+     warningMsg : "",
   }
-};
+  },
+methods:{
+     submitForm(){
+            return axios.post('http://localhost:8000/api/contact', {
+                name:this.form.firstName,
+                email:this.form.email,
+                message:this.form.message,
+            }).then(data => {
+             this.success= true;
+             this.successMsg=  'Votre message a été envoyé ';
+            }).catch(
+              error=>{
+                this.success= false;
+                if (error.response) {
+                switch (error.response.status) {
+                  case 422 : 
+                  this.warningMsg= 'vous devez remplir tous les données ';
+                  break;
+                  
+                  default: this.warningMsg= "Votre message n'a pu être envoyé "
+}
+              }
+            });;
+        }
+  }
+}
 </script>
 <style scoped media="scss"  lang="scss">
   h4{
@@ -83,5 +129,10 @@ export default {
   }
   i{
     font-size: 30px;
+  }
+  .alert{
+    padding-top: 20px!important ; 
+    padding-bottom: 20px!important ;
+    margin-bottom : 20px;
   }
 </style>
