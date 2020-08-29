@@ -12,8 +12,7 @@ class ClientController extends Controller
     {
     }
     
-     //api/event
-
+     //app/event
     public function select(Request $request){
         $typeId = gettype($request->id);
         $controller = new gCalendarController;
@@ -83,7 +82,8 @@ class ClientController extends Controller
         }
     }
 
-     //api/users
+     //app/users
+     //Submit the form of the profile page 
      public function submitForm(Request $request){
         $user = auth()->user($request->token);
         $user->age= $request->age;

@@ -48,17 +48,12 @@ export default {
        this.$store.state.userId = response.data.id;
        this.$store.state.role = response.data.role
       }).catch(error=>{
-      console.log(error.message );
       })
   },
   },
   created(){
-      console.log("token before log in : "+ this.$store.getters.token);
       if (this.$store.getters.isLoggedIn) {
-        console.log("token after log in : "+ this.$store.getters.token);
          this.getUser();
-         //document.cookie= "token=" + axios.defaults.headers.Authorization;
-         //console.log("this is the headers: "+ document.cookie);
       }
     }
 };

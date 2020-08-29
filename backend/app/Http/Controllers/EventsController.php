@@ -53,13 +53,9 @@ class EventsController extends Controller
          $event=Event::find($id);
          $event->delete();
          }
-        
-        //var_dump($eventsToDelete);
-
-
-        
+        //$finalData data is a merged array of data from database and google data 
         $finalData = array_merge( $data, $gData);
-        return response()->json($finalData); //$final data is a merged array of data from database and google data 
+        return response()->json($finalData); 
 
     }
 

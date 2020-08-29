@@ -18,7 +18,7 @@ class AdminController extends Controller
     public function __construct()
 {
 }
-    //fonction sur events admin
+    // events admin functions
     public function create(Request $request)
     {
         $event = new Event;

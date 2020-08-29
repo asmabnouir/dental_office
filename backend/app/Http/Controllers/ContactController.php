@@ -8,25 +8,20 @@ use Illuminate\Http\Request;
 class ContactController extends Controller
 {
     public function submitForm(Request $request){
-      
+        //Check that all requestes are valid
         $data = $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email',
             'message' => 'required',
         ]);
-        //Mail::to( config('mydentaloffice.email@gmail.com') )->send( new ContactEmail($request->only(['name', 'email', 'message'])) );
-       /* \Mail::raw('mailtestBdy', function($message) {
-            $message->to('mydentaloffice.email@gmail.com', 'testname')->subject
-               ('test email subject');
-            $message->from('xyz@gmail.com','Virat Gandhi');
-         });*/
          if ($data){
+            //Send email 
          \Mail::raw($request->message, function ($message) use($request) {
             $message->to('mydentaloffice.email@gmail.com')->subject('Dental _office contact from : '.$request->name);
-              $message->from();
+              $message->from($request->email);
           });
          }
 
-        return response()->json(" mail ok ");
+        return response()->json();
     }
     }

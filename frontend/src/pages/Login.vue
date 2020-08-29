@@ -47,11 +47,11 @@
                 >
               </div>
               <div class="pull-left">
-                <h6 >
+                <h5>
                   <router-link :to="{ name: 'register'}">
                     <a class="link footer-link">Cree un compte </a>
                   </router-link>
-                </h6>
+                </h5>
               </div>
             </template>
               <alert
@@ -60,8 +60,7 @@
                 <div class="alert-icon">
                       <i class="now-ui-icons ui-2_like"></i>
                     </div>
-                    <strong>Oups!</strong> Votre email ou mot de passe est incorrecte
-                    {{error}}
+                    <strong>Oups! , {{warningMsg}}</strong>
               </alert>
           </card>
         </div>
@@ -93,7 +92,8 @@ export default {
           email:"",
           password:""
         },
-        error:"",
+        error:false,
+        warningMsg:""
       }
     },
     methods:{
@@ -105,7 +105,6 @@ export default {
             email:this.user.email,
             password:this.user.password
         }).then(response =>{
-          console.log(response.data);
           setCookie('token', response.data.access_token , 30)
           this.$store.state.token = response.data.access_token;
           this.$store.state.userId = response.data.user.id;
@@ -116,11 +115,18 @@ export default {
           }else{
               this.$router.push({ name: 'profile'});
           }
-        }).catch(error=>{
-        console.log(error.message);
-        });
-        console.log("login function");
-        
+        }).catch(
+              error=>{
+                if (error.response) {
+                    this.error=true;
+                switch (error.response.status) {
+                  case 401 :
+                  this.warningMsg= 'Email ou mot de passe incorrect';
+                  break;
+                  default: this.warningMsg= "La connexion n'a pu être établie "
+                  }
+              }
+            });
         }
       },
 
@@ -128,4 +134,8 @@ export default {
 
 };
 </script>
-<style></style>
+<style scoped >
+.pull-left{
+margin-top: 30px; 
+}
+</styles>

@@ -52,6 +52,14 @@
             </div>
           </div>
           <button  type="submit" class=" btn btn-primary">Enregistrer les moidification</button>
+          <alert
+              v-if="error"
+              type="primary alert" dismissible>
+                <div class="alert-icon">
+                      <i class="now-ui-icons ui-2_like"></i>
+                    </div>
+                    <strong>Oups! , {{warningMsg}}</strong>
+              </alert>
           </form>
         </div>
       </div>
@@ -84,7 +92,6 @@ export default {
   methods:{
     getUser(){
       axios.post('http://localhost:8000/api/auth/me',{token:this.$store.state.token}).then(response =>{
-      //console.log(response.data);
         this.$store.state.UserId = response.data.id;
        this.form.name = response.data.name;
        this.form.email = response.data.email;
@@ -93,7 +100,6 @@ export default {
       this.form.submitted=false;
       console.log( this.form.submitted);
       }).catch(error=>{
-      console.log(error.message);
       })
   },
     submitForm(){
@@ -109,7 +115,10 @@ export default {
       this.getUser();
       console.log( this.form.submitted);
       }).catch(error=>{
-      console.log(error.message);
+          this.alert= true;
+                if (error.response) {
+                this.warningMsg= "Vos données ne sont pas enregistré, Veuillez réessayer  "
+              }
       });
     }
   },

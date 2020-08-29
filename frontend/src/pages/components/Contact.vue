@@ -112,9 +112,9 @@ methods:{
                   this.warningMsg= 'vous devez remplir tous les données ';
                   break;
                   default: this.warningMsg= "Votre message n'a pu être envoyé "
-}
+                  }
               }
-            });;
+            });
         }
   }
 }

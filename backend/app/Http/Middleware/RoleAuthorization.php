@@ -34,11 +34,10 @@ class RoleAuthorization
                 //Thrown if token has expired
                 return $this->unauthorized('Your token has expired. Please, login again.');
                 //$user = JWTAuth::setToken($refreshed)->toUser();
-               
+
             }catch (TokenInvalidException $e) {
                 //Thrown if token invalid
                 return $this->unauthorized('Your token is invalid. Please, login again.');
          }
-  
 }
 }

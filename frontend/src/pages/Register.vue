@@ -7,6 +7,7 @@
     <div class="content">
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
+          
           <card  type="login" plain>
             <div slot="header" class="logo-container">
               <img v-lazy="'img/Logo.png'" alt="" />
@@ -51,12 +52,20 @@
                   >Enregistrer</a
                 >
               </div>
+              <alert
+              v-if="error"
+              type="primary alert" dismissible>
+                <div class="alert-icon">
+                      <i class="now-ui-icons ui-2_like"></i>
+                    </div>
+                    <strong>Oups! , {{warningMsg}}</strong>
+              </alert>
               <div class="pull-left">
-                <h6 >
+                <h5 >
                   <router-link :to="{ name: 'login'}">
                     <a class="link footer-link">Login</a>
                   </router-link>
-                </h6>
+                </h5>
               </div>
             </template>
           </card>
@@ -89,7 +98,7 @@ export default {
             password_confirmation:"",
         },
           error: false,
-          errors: {},
+          errors: false,
           success: false
       }
     },
@@ -103,12 +112,26 @@ export default {
         }).then(response =>{
           this.$router.push({ name: 'login'});
         }).catch(error=>{
-        console.log(error.message )
+         if (error.response) {
+                this.error=true;
+                switch (error.response.status) {
+                  case 401 :
+                  this.warningMsg= 'Email ou mot de passe incorrect';
+                  break;
+                  default: this.warningMsg= "La connexion n'a pu être établie "
+                  }
+              }
         })
-        console.log("register function");
       }
     }
 
 };
 </script>
-<style></style>
+<style scoped >
+.pull-left{
+margin-top: 30px; 
+}
+fg-input{
+  padding: 20px;
+}
+</style>
