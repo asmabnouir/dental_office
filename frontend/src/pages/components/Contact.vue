@@ -40,18 +40,18 @@
                     ></textarea>
                   </div>
                   <div class="send-button">
-                    <n-button  @click.prevent="submitForm(), alert = true" type="primary" round block size="lg"
+                    <n-button  @click.prevent="submitForm(), alertDispaly()" type="primary" round block size="lg"
                       >Envoyer Message</n-button
                     >
                   </div>
-                  <div class = 'alert' v-show="alert" >
+                  <div class ='alert' v-show="alert" >
                     <alert v-if="success" type="success" dismissible>
                       <div class="alert-icon">
                           <i class="now-ui-icons ui-2_like"></i>
                       </div>
                         <strong>{{successMsg}}</strong>
                      </alert>
-                    <alert v-else type="warning" dismissible>
+                    <alert v-else-if="!success" type="warning" dismissible>
                       <div class="alert-icon">
                           <i class="now-ui-icons ui-2_like"></i>
                       </div>
@@ -84,12 +84,17 @@ export default {
         message: '',
     },
       alert:false,
-      success:false,
+      success:null,
      successMsg : "",
      warningMsg : "",
   }
   },
 methods:{
+    alertDispaly(){
+      setTimeout(() => {
+             this.alert = true;
+              }, 3000);
+    },
      submitForm(){
             return axios.post('http://localhost:8000/api/contact', {
                 name:this.form.firstName,
@@ -100,13 +105,12 @@ methods:{
              this.successMsg=  'Votre message a été envoyé ';
             }).catch(
               error=>{
-                this.success= false;
+                  this.success= false;
                 if (error.response) {
                 switch (error.response.status) {
                   case 422 : 
                   this.warningMsg= 'vous devez remplir tous les données ';
                   break;
-                  
                   default: this.warningMsg= "Votre message n'a pu être envoyé "
 }
               }
