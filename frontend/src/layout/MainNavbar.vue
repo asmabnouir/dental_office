@@ -8,8 +8,9 @@
   >
     <template >
       <router-link v-popover:popover1 class="navbar-brand" to="/">
-      Grand Street Dental
-      </router-link>
+      <div v-if=" $store.state.isLoggedIn && $store.state.role ==='client' && $route.name === 'profile' ">Réserver un Rdv </div>
+      <div v-else> Grand Street Dental</div>
+      </router-link> 
     </template>
     <template slot="navbar-menu">
       <li v-if="$route.name === 'index' " class="nav-item">
