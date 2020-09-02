@@ -14,14 +14,14 @@
         </div>
       </div>
     </div>
-    <tabs-section id="services"></tabs-section>
+    <tabs-section id="services"  v-show="!$store.state.isLoggedIn || $store.state.role ==='client'" ></tabs-section>
     <calendar id="calendar"></calendar>
         <div
     class="navigation-example"
     style="background-image:url('img/GSD_2.jpg');
             background-attachment: fixed;"
   ></div>
-    <contact id="contact"></contact>
+    <contact id="contact"  v-show="!$store.state.isLoggedIn || $store.state.role ==='client'" ></contact>
 
   </div>
 </template>

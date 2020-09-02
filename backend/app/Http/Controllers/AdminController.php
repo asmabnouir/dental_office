@@ -54,11 +54,12 @@ class AdminController extends Controller
         $time = $event->start_time;
         //convert the dateTime to the format accepted from google Calendar
         $dateTime = $date.' '.$time;
+        
         //call the function from gcalendarControlelr to find the eventid in google Calendar
         $eventId = $controller->Find_g_EventByDatetTime($dateTime);
-        $controller->gEventDelete($eventId);
         //delete the event in the app
         $event->delete();
+        $controller->gEventDelete($eventId);
         }
     }
 

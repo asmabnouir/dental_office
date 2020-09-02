@@ -111,4 +111,8 @@ export default {
   }
 };
 </script>
-<style></style>
+<style>
+.input-group, .form-group{
+  margin: 25px auto !important;
+}
+</style>

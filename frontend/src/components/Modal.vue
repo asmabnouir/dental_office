@@ -101,4 +101,11 @@ export default {
 .modal.show {
   background-color: rgba(43, 42, 42, 0.082);
 }
+
+.close{
+   position: relative !important;
+    right: 27px;
+    top: 0!important;
+    outline: 0;
+}
 </style>

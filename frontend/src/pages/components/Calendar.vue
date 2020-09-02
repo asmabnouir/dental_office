@@ -30,11 +30,9 @@
       <td v-for="(dayDate, index) in calendarWeek.weekDates" :key="index">
        <div v-if="displayEventA(dayDate, time)" 
         v-bind:class="['event' ,  ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
-        @click.prevent="
-        ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0
-        ? deleteEvent(displayEventA(dayDate,time).id)
-        :  getUsers(), modals.mini = true, modals.eventId= displayEventA(dayDate,time).id" >
-        userId {{(typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id: ''  }}
+        @click="
+        edit(((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : ''), displayEventA(dayDate,time).id)">
+          Clique ici pour éditer 
         </div>
         <div v-else class="empty" @click="createEvent(dayDate, time,$event)">
         </div>
@@ -62,7 +60,7 @@
                 addon-right-icon="now-ui-icons ui-1_zoom-bold"
                 ></fg-input>
                <div :style="displaySearch" >
-                  <div  id="userSearch" v-for="(user,index) in filteredUsers" :key="index" @click="eventAddUser(user)">
+                  <div  id="userSearch" v-for="(user,index) in filteredUsers" :key="index" @click="eventAddUser(user), search=''">
                      {{user.name}}</div>
               </div>
             </modal>
@@ -74,10 +72,7 @@
        <div v-show="displayEventC(dayDate, time)"
         v-bind:class="['event' ,  ((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
         @click.prevent=" !$store.state.token ? $router.push({ name: 'login'}) : toggleSelect(dayDate, time,$event)" >
-          eventId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).id : ''  }}
-          <br>userId : {{(typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : ''  }}
-          <br>{{formatDate(dayDate)}}
-         <br>{{time}}
+          <p>Clique ici pour reserver </p>
         </div>
       </td>
     </tr>
@@ -139,6 +134,9 @@ import { Button, Modal,FormGroupInput, } from '@/components';
 
       },
     methods: {
+      alert(i){
+        alert(i)
+      },
       ///////////////////////////////////////////// calendar display ////////////////////////////////////
       
       generateTimes(x,hs,he){
@@ -349,7 +347,7 @@ import { Button, Modal,FormGroupInput, } from '@/components';
               return ev
             }
       },
-      
+
       //create free event
     createEvent(dayDate, time, $event){
       console.dir("this is from js : "+ this.formatToPhp(dayDate));
@@ -360,7 +358,6 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         }).then(response=>{
           console.dir(response.data);
           this.getEvents();
-         // this.displayEventA(dayDate, time);
         }).catch(error=>{
         console.log(error.message);
         });
@@ -370,12 +367,21 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         id : eventId,
         token:  this.$store.state.token
         }).then(response=>{
-        if(this.modals.mini){this.modals.mini=false }
         this.getEvents();
         }).catch(error=>{
         console.log(error.message);
         });
+        this.modals.mini=false;
     },
+    edit(eventUserId, eventId){
+        if (eventUserId === 0) {
+          this.getUsers(),
+          this.modals.mini=true,
+          this.modals.eventId= eventId
+        } else {
+         this.deleteEvent(eventId) 
+        }
+      },
     },
     /////////////////////////////////////////////  calendar build  ////////////////////////////////////
     created() {
@@ -528,7 +534,7 @@ tbody tr td {
 
 .event{
   
- background: #00B4FC;
+ background:  #24549E ;// #00B4FC;
   color: white;
   border-radius: 2px;
   text-align: left;
@@ -595,6 +601,14 @@ button.secondary:focus {
 .icon:hover {
   color: red;
 }
-
+//search users list 
+#userSearch{
+    text-align: center;
+    margin: 15px auto;
+  cursor: pointer;
+}
+#userSearch:hover{
+  color:#24549E;
+}
 </style>
 

@@ -86,7 +86,8 @@ export default {
         age:'',
         text: '',
         submitted:false,
-      }
+      },
+      error:false,
     }
   },
   methods:{

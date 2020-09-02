@@ -13,7 +13,7 @@
       </router-link> 
     </template>
     <template slot="navbar-menu">
-      <li v-if="$route.name === 'index' " class="nav-item">
+      <li v-if="$route.name === 'index' " class="nav-item"  v-show="!$store.state.isLoggedIn || $store.state.role ==='client'" >
         <a
           class="nav-link"
           href="#services"
@@ -21,7 +21,7 @@
           <p>Services</p>
         </a>
       </li>
-      <li v-if="$route.name === 'index' "  class="nav-item">
+      <li v-if="$route.name === 'index' "  class="nav-item"  v-show="!$store.state.isLoggedIn || $store.state.role ==='client'" >
         <a
           class="nav-link"
           href="#calendar"
@@ -29,7 +29,7 @@
           <p>Prendre RDV</p>
         </a>
       </li>
-      <li v-if="$route.name === 'index' "  class="nav-item">
+      <li v-if="$route.name === 'index' "  class="nav-item"   v-show="!$store.state.isLoggedIn || $store.state.role ==='client'" >
         <a
           class="nav-link"
           href="#contact"
@@ -37,7 +37,7 @@
           <p>Contact</p>
         </a>
       </li>
-      <li class="nav-item" v-show="$store.state.isLoggedIn">
+      <li class="nav-item" v-show="$store.state.isLoggedIn  && $store.state.role ==='client'">
         <router-link :to="{ name: 'profile' }" >
            <a
             class="nav-link "
@@ -110,5 +110,8 @@ export default {
 <style scoped>
 .profile{
   display:flex;
+}
+a{
+  cursor: pointer;
 }
 </style>

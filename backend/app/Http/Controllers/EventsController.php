@@ -40,7 +40,8 @@ class EventsController extends Controller
         
         //check if all events in db are in google ( vérifier si l y a une suppression d'event dans google )
         $eventsToDelete= array();
-        foreach ($data as $event) {
+
+        foreach ($data as $event){
         $dateTime = $event['event_date'] . ' ' . $event['start_time'] ;
         $check = in_array($dateTime, $gDataDate);
         if($check === false){
@@ -49,10 +50,13 @@ class EventsController extends Controller
         }
         //delete the event from db 
          //find the id of the event to delete in the app 
-         foreach ($eventsToDelete as $id) {
-         $event=Event::find($id);
-         $event->delete();
+         if(isset($eventsToDelete)){
+            foreach ($eventsToDelete as $id) {
+                $event=Event::find($id);
+                $event->delete();
+                }
          }
+
         //$finalData data is a merged array of data from database and google data 
         $finalData = array_merge( $data, $gData);
         return response()->json($finalData); 
