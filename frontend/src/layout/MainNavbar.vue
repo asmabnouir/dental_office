@@ -100,14 +100,12 @@ export default {
             this.$store.state.role = "";
             this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
             this.$store.state.isLoggedIn = false;
-            Bus.$emit('logout');
           })
         }
     },
     mounted(){
     this.$root.$on("logout", () => {
-
-      return this.logout();
+    return this.logout();
     });
     }
 };

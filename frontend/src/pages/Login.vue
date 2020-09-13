@@ -114,7 +114,7 @@ export default {
                 setTimeout(() => {
                     alert("Votre session a expirée. Veuillez vous reconnecter ");
                      this.$root.$emit("logout") //if the token will expired I logout
-                },  1,123e+9); //for 13 days
+                },  1123200000); //for 13 days
                 })
             }, 3,6e+6);
          }
