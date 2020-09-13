@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Illuminate\Http\Request;
 
 use App\User;
@@ -17,7 +21,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['login','register']);
+        $this->middleware('auth:api')->except(['login','register', 'refresh','logout']);
     }
 
     /**
@@ -69,7 +73,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json($this->guard()->user());
+            return response()->json($this->guard()->user());
     }
 
     /**
@@ -91,16 +95,12 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh()
+    public function refresh(Request $request)
     {
-        /*if ($token = $this->guard()->refresh()) {
-            return response()
-                ->json(['status' => 'successs'], 200)
-                ->header('Authorization', $token);
-        }*/
-        $newToken =  $this->guard()->refresh();
-        /*return response()->json(['error' => 'refresh_token_error'], 401);*/
-        return response()->json(['token' => $newToken ]);
+       $refreshed =  Auth::guard()->refresh($request->token);
+       $user = JWTAuth::setToken($refreshed)->toUser();
+       return response()->json(['token' => $refreshed]);
+        //return $this->respondWithToken($this->guard()->refresh());
     }
 
     /**
@@ -115,7 +115,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $this->guard()->factory()->getTTL() * 60,
+            'expires_in' =>$this->guard()->factory()->getTTL(),
             'user' => auth()->user()
         ]);
     }

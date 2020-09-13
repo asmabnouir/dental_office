@@ -31,6 +31,7 @@ import TabsSection from './components/Tabs';
 import Calendar from './components/Calendar';
 import Contact from './components/Contact';
 import axios from 'axios';
+import {setCookie} from "../helpers";
 
 export default {
   name: 'index',
@@ -44,18 +45,29 @@ export default {
   methods:{
   getUser(){
       axios.post('http://localhost:8000/api/auth/me',{token:this.$store.getters.token}).then(response =>{
-      //console.log(response.data);
+       //console.log(response.data);
        this.$store.state.userId = response.data.id;
        this.$store.state.role = response.data.role
-      }).catch(error=>{
-      })
-  },
+      }).catch(
+        error=>{
+        if(error.response.status == 401){
+        alert("Votre session a expirée. Veuillez vous reconnecter ");
+        //this.$root.$emit("logout") //if the token will expired I logout
+         this.$store.commit('logout');
+            this.$store.state.role = "";
+            this.$router.push({name: 'login', params: {logoutState: true , message: "Veuillez vous reconnecter"} });
+            this.$store.state.isLoggedIn = false;
+        }
+        })
+          },
+
   },
   created(){
       if (this.$store.getters.isLoggedIn) {
          this.getUser();
       }
-    }
+    },
+
 };
 </script>
 <style Scoped lang="scss">

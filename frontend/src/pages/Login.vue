@@ -72,8 +72,9 @@
 <script>
 import { Card, Button, FormGroupInput, Alert} from '@/components';
 import MainFooter from '@/layout/MainFooter';
+import MainNavbar from '@/layout/MainNavbar';
 import axios from 'axios';
-import { Bus } from '../main';
+import { Bus } from '../bus';
 import { getLocalUser, setCookie,  getCookie } from "../helpers";
 
 export default {
@@ -85,6 +86,7 @@ export default {
     [Button.name]: Button,
     [FormGroupInput.name]: FormGroupInput,
     Alert,
+    MainNavbar
   },
     data(){
       return {
@@ -97,6 +99,26 @@ export default {
       }
     },
     methods:{
+      
+       handleToken(){
+         if(this.$store.state.isLoggedIn){
+           // refresh the token after 50min befor the accees_token is expired in 60 min 
+            setTimeout(() => {
+              axios.post('http://localhost:8000/api/auth/refresh',{token:this.$store.getters.token})
+              .then(response =>{
+                setCookie('token', response.data , 30);
+                //console.log(response.data.token)
+                this.$store.state.token = response.data.token;
+                //console.log(response.data);
+              //logout 5 min before the refresh token is expired ()
+                setTimeout(() => {
+                    alert("Votre session a expirée. Veuillez vous reconnecter ");
+                     this.$root.$emit("logout") //if the token will expired I logout
+                },  1,123e+9); //for 13 days
+                })
+            }, 3,6e+6);
+         }
+       },
       login(){
         if (!this.user.email && !this.user.password ) {
            this.error.push('email or Password required.');
@@ -115,6 +137,9 @@ export default {
           }else{
               this.$router.push({ name: 'profile'});
           }
+          //console.log(response.data);
+          //envoyer le token juste après le login 
+          this.handleToken()
         }).catch(
               error=>{
                 if (error.response) {
@@ -129,7 +154,6 @@ export default {
             });
         }
       },
-
     },
 
 };
