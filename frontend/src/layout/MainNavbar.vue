@@ -69,7 +69,7 @@ import { DropDown, NavbarToggleButton, Navbar, NavLink } from '@/components';
 import { Popover } from 'element-ui';
 import {Button} from '../components';
 import axios from 'axios';
-import { Bus } from '../main';
+import { Bus } from '../bus';
 
 export default {
   name: 'main-navbar',
@@ -93,16 +93,23 @@ export default {
     methods:{
          logout(){
           axios.post('http://localhost:8000/api/auth/logout',{token:this.$store.state.token}).then(response =>{
-            console.log(response.data.message);
+            //console.log(response.data.message);
             
             this.logoutMsg = response.data.message;
             this.$store.commit('logout');
             this.$store.state.role = "";
             this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
-            
+            this.$store.state.isLoggedIn = false;
+            Bus.$emit('logout');
           }),
-          console.log( this.$store.state.isLoggedIn + "  // logout function");
+          //console.log( this.$store.state.isLoggedIn + "  // logout function");
         }
+    },
+    mounted(){
+    this.$root.$on("logout", () => {
+
+      return this.logout();
+    });
     }
 };
 </script>

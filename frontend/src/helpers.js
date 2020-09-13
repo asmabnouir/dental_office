@@ -32,3 +32,4 @@ export function getCookie(name) {
 export function deleteCookie(name) {
 	createCookie(name,"",-1);
 }
+

@@ -21,11 +21,12 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-    Route::post('register', 'AuthController@register');
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::get('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+Route::post('register', 'AuthController@register');
+Route::post('login', 'AuthController@login');
+Route::post('logout', 'AuthController@logout');
+Route::post('refresh', 'AuthController@refresh');
+Route::post('me', 'AuthController@me');
+Route::post('handle', 'AuthController@handle');
 
 });
 
@@ -57,7 +58,7 @@ Route::group([
     'prefix' => 'google'
 
 ], function () {
-    Route::get('cal', 'gCalendarController@indexAll');
+    Route::get('cal', 'gCalendarController@index');
     Route::get('free', 'gCalendarControlle@getFreeEvents');
 });
 

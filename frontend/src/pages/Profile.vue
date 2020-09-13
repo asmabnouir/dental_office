@@ -99,7 +99,7 @@ export default {
        this.form.text = response.data.text;
        this.form.age = response.data.age;
       this.form.submitted=false;
-      console.log( this.form.submitted);
+      //console.log( this.form.submitted);
       }).catch(error=>{
       })
   },
@@ -110,11 +110,11 @@ export default {
         text : this.form.text,
         age  : this.form.age,
       }).then(response =>{
-      console.log(response.data);
+      //console.log(response.data);
       this.form.submitted = true;
-      console.log( this.form.submitted);
+      //console.log( this.form.submitted);
       this.getUser();
-      console.log( this.form.submitted);
+      //console.log( this.form.submitted);
       }).catch(error=>{
           this.alert= true;
                 if (error.response) {
