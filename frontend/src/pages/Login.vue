@@ -116,7 +116,7 @@ export default {
                      this.$root.$emit("logout") //if the token will expired I logout
                 },  1123200000); //for 13 days
                 })
-            }, 3,6e+6);
+            }, 2400000); //40min
          }
        },
       login(){

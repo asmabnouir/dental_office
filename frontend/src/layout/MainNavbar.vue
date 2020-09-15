@@ -100,6 +100,8 @@ export default {
             this.$store.state.role = "";
             this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
             this.$store.state.isLoggedIn = false;
+          }).catch(error=>{
+            console.log(error.message);
           })
         }
     },
