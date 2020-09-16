@@ -102,7 +102,7 @@ export default {
       
        handleToken(){
          if(this.$store.state.isLoggedIn){
-           // refresh the token after 50min befor the accees_token is expired in 60 min 
+           // refresh the token after 50min before the accees_token is expired in 60 min 
             setTimeout(() => {
               axios.post('http://localhost:8000/api/auth/refresh',{token:this.$store.getters.token})
               .then(response =>{
@@ -110,7 +110,7 @@ export default {
                 //console.log(response.data.token)
                 this.$store.state.token = response.data.token;
                 //console.log(response.data);
-              //logout 5 min before the refresh token is expired ()
+              //logout before the refresh token is expired ()
                 setTimeout(() => {
                     alert("Votre session a expirée. Veuillez vous reconnecter ");
                      this.$root.$emit("logout") //if the token will expired I logout

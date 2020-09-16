@@ -6,11 +6,13 @@
     :color-on-scroll="colorOnScroll"
     menu-classes="ml-auto"
   >
-    <template >
-      <router-link v-popover:popover1 class="navbar-brand" to="/">
-      <div v-if=" $store.state.isLoggedIn && $store.state.role ==='client' && $route.name === 'profile' ">Réserver un Rdv </div>
-      <div v-else> Grand Street Dental</div>
+    <template>
+      <router-link v-if=" $store.state.isLoggedIn && $store.state.role ==='client' && $route.name === 'profile' " v-popover:popover1 class="navbar-brand" to="/#calendar">
+      <div >Réserver un Rdv </div>
       </router-link> 
+      <router-link v-else  v-popover:popover1 class="navbar-brand" to="/" >
+      <div > Grand Street Dental</div>
+      </router-link>
     </template>
     <template slot="navbar-menu">
       <li v-if="$route.name === 'index' " class="nav-item"  v-show="!$store.state.isLoggedIn || $store.state.role ==='client'" >
@@ -101,7 +103,7 @@ export default {
             this.$router.push({name: 'login', params: {logoutState: true , message: this.logoutMsg} });
             this.$store.state.isLoggedIn = false;
           }).catch(error=>{
-            console.log(error.message);
+            //console.log(error.message);
           })
         }
     },

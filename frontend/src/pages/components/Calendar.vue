@@ -32,7 +32,7 @@
         v-bind:class="['event' ,  ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
         @click="
         edit(((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : ''), displayEventA(dayDate,time).id)">
-          Clique ici pour éditer 
+          <p> {{((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'Cliquez ici pour supprimer ce rdv' : 'Cliquez ici pour editer le rdv'}} </p>
         </div>
         <div v-else class="empty" @click="createEvent(dayDate, time,$event)">
         </div>
@@ -72,7 +72,7 @@
        <div v-show="displayEventC(dayDate, time)"
         v-bind:class="['event' ,  ((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
         @click.prevent=" !$store.state.token ? $router.push({ name: 'login'}) : toggleSelect(dayDate, time,$event)" >
-          <p>Clique ici pour reserver </p>
+          <p>{{((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? "Cliquez ici pour annuer le rdv" : "Cliquez ici pour réserver le rdv"}}</p>
         </div>
       </td>
     </tr>
@@ -129,8 +129,8 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         },
         displaySearch(){
           return this.search.length>=1 ? 'display:block':'display:none'
-           
-        }
+        },
+        
 
       },
     methods: {
@@ -276,33 +276,37 @@ import { Button, Modal,FormGroupInput, } from '@/components';
       },
       toggleSelect(dayDate, time,$event){
         //select an event
-        //add ths id of the current_user to event.user_id
+        //add ths id of the current_user to event.user_id 
        let  currentEvent_id= this.displayEventC(dayDate, time).id;
         if ( this.displayEventC(dayDate, time).user_id ===0) {
-        axios.post('http://localhost:8000/api/event/client/select',{
-        id : currentEvent_id,
-        date: this.formatToPhp(this.formatDate(dayDate)),
-        time:  time,
-        token:  this.$store.state.token
-       }).then(response=>{
-        this.getEvents();
-       }).catch(error=>{
-         if (error.message == 'Request failed with status code 401') {
-           this.$router.push({ name: 'login'});
-         }
-        });
+          if (confirm("Voulez vous confirmez votre rdv du" + this.formatDate(dayDate) + " à " + time) === true) {
+            axios.post('http://localhost:8000/api/event/client/select',{
+              id : currentEvent_id,
+              date: this.formatToPhp(this.formatDate(dayDate)),
+              time:  time,
+              token:  this.$store.state.token
+            }).then(response=>{
+              this.getEvents();
+            }).catch(error=>{
+            if (error.message == 'Request failed with status code 401') {
+              this.$router.push({ name: 'login'});
+            }
+            }); 
+          }
         }
         //unselect an event
         //put event.user_id to 0
         else {
-        axios.post('http://localhost:8000/api/event/client/unselect',{
-        id : currentEvent_id,
-        token:  this.$store.state.token
-       }).then(response=>{
-        this.getEvents();
-       }).catch(error=>{
-         console.log(error.message)
-        });
+          if (confirm("Voulez vous annuler votre rdv du" + this.formatDate(dayDate) + " à " + time) === true) {
+            axios.post('http://localhost:8000/api/event/client/unselect',{
+              id : currentEvent_id,
+              token:  this.$store.state.token
+            }).then(response=>{
+              this.getEvents();
+            }).catch(error=>{
+              console.log(error.message)
+              });
+          }
         }
       },
           ///////////////////////////////////////////// calendar Events Admin side  ////////////////////////////////////
@@ -529,12 +533,13 @@ tbody tr td {
 }
 
 .event_selected{
-  background: rgb(252, 134, 0)! important;
+  background:  #eeef20 ! important  ; // rgb(252, 134, 0)! important;
+  color : rgba(0, 0, 0, 0.9) ! important ;
 }
 
 .event{
   
- background:  #24549E ;// #00B4FC;
+ background:  #7ac74f ;  //#24549E;
   color: white;
   border-radius: 2px;
   text-align: left;
