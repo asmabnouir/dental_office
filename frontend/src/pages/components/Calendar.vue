@@ -1,6 +1,12 @@
 <template>
 <div>
   <div class="calendar">
+      <div v-if="$store.state.windowWidth <500"  class="screenHider" >
+      <div ><p> Pour une meilleure expérience 
+        <br>
+       Tournez votre appareil avec affichage en mode paysage </p>
+        </div>
+      </div>
     <div>
       <header>
       <button @click.prevent="getToday()" class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
@@ -32,7 +38,7 @@
         v-bind:class="['event' ,  ((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
         @click="
         edit(((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : ''), displayEventA(dayDate,time).id)">
-          <p> {{((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'Cliquez ici pour supprimer ce rdv' : 'Cliquez ici pour editer le rdv'}} </p>
+          <p v-bind:class="[$store.state.windowWidth <700? 'mobile':'']"> {{((typeof displayEventA(dayDate,time)!== 'undefined')? displayEventA(dayDate,time).user_id : '') !== 0 ? 'Cliquez ici pour supprimer ce rdv' : 'Cliquez ici pour editer le rdv'}} </p>
         </div>
         <div v-else class="empty" @click="createEvent(dayDate, time,$event)">
         </div>
@@ -72,7 +78,7 @@
        <div v-show="displayEventC(dayDate, time)"
         v-bind:class="['event' ,  ((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? 'event_selected' : '']"
         @click.prevent=" !$store.state.token ? $router.push({ name: 'login'}) : toggleSelect(dayDate, time,$event)" >
-          <p>{{((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? "Cliquez ici pour annuer le rdv" : "Cliquez ici pour réserver le rdv"}}</p>
+          <p v-bind:class="[$store.state.windowWidth <700? 'mobile':'']"> {{((typeof displayEventC(dayDate,time)!== 'undefined')? displayEventC(dayDate,time).user_id : '') !== 0 ? "Cliquez ici pour annuer le rdv" : "Cliquez ici pour réserver le rdv"}}</p>
         </div>
       </td>
     </tr>
@@ -130,13 +136,12 @@ import { Button, Modal,FormGroupInput, } from '@/components';
         displaySearch(){
           return this.search.length>=1 ? 'display:block':'display:none'
         },
-        
+        windowWidth() {
+          return this.$store.state.windowWidth;
+        }
 
       },
     methods: {
-      alert(i){
-        alert(i)
-      },
       ///////////////////////////////////////////// calendar display ////////////////////////////////////
       
       generateTimes(x,hs,he){
@@ -404,11 +409,34 @@ import { Button, Modal,FormGroupInput, } from '@/components';
   margin: 0;
   border: 0;
 }
+.screenHider{
+  z-index: 100;
+  width :100% ;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.603);
+  position: absolute; 
+  div{
+    position: absolute;
+    padding: 30px;
+    background-color: #e8e8e8;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    p{
+      text-align: center;
+      color:#24549E ;
+    }
+  }
+
+}
 .outer {
   position:relative;
 }
 
 .calendar {
+  .mobile{
+  font-size: 70%;
+}
   position:relative;
   margin: 20px auto;
   max-width: 1280px;
